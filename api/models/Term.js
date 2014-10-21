@@ -146,7 +146,8 @@ module.exports = {
 
         sails.log.verbose('Created TermModelAssoc:', result);
 
-        var ids = salvedTerms.map(function (t) {
+        var ids = [];
+        ids = salvedTerms.map(function (t) {
           return ids.push(t.id);
         });
 
