@@ -399,6 +399,10 @@ module.exports = {
     var termsToAdd = [];
     var termsSalved = [];
 
+    if (!newTerms) {
+      newTerms = [];
+    }
+
     for (var i = newTerms.length - 1; i >= 0; i--) {
 
       var isNew = true;
