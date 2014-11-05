@@ -40,5 +40,5 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:wejs/we-plugin-vocabulary.git"
-  },
+  }
 }
