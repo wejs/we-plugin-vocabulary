@@ -1,7 +1,7 @@
 {
   "name": "we-plugin-vocabulary",
   "description": "We.js plugin vocabulary",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "license": "MIT",
   "main": "lib/index.js",
   "dependencies": {
@@ -36,5 +36,9 @@
     "wejs",
     "plugin",
     "sails.js"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:wejs/we-plugin-vocabulary.git"
+  },
 }
