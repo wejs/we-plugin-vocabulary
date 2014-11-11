@@ -38,6 +38,30 @@ module.exports = {
     cb();
   },
 
+  getRelatedRecords: function(options, cb) {
+    var relatedTerms = options.terms.map(function(term){
+      return term.id;
+    });
+
+    var termsString = relatedTerms.join();
+
+    var sql = 'SELECT DISTINCT TMA.modelId FROM termmodelassoc TMA ' +
+      'WHERE TMA.`modelId`!=' + options.modelId + ' ';
+    if (termsString) {
+      sql += 'AND TMA.`termId` in (' + termsString;
+    }
+
+    sql += ') ' +
+      'AND TMA.`modelName`="' + options.modelName + '" ' +
+      ' ORDER BY RAND() ' +
+      'LIMIT 4;';
+
+    return TermModelAssoc.query(sql, function(err, recordsIds) {
+      if(err) return cb(err);
+      return cb(null, recordsIds);
+    })
+  },
+
   /**
    * Get model term atribute Name
    * @param  {object} Model sails.models.model
