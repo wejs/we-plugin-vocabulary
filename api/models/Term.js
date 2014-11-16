@@ -34,7 +34,7 @@ module.exports = {
   },
 
   afterDestroy: function(record, cb) {
-    sails.log.warn('Term:afterDestroy', record);
+    //sails.log.warn('Term:afterDestroy', record);
     cb();
   },
 
