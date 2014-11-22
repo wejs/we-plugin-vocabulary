@@ -11,8 +11,6 @@ var util = require('util');
 var _ = require('lodash');
 
 module.exports = {
-  // add your plugin controllers here
-
   updateModelTerms: function updateModelTerms (req, res, next) {
 
     var sails = req._sails;
@@ -46,10 +44,10 @@ module.exports = {
 
     var Model = sails.models[modelName];
 
-    var modelAtribute = Term.getTermAtributesNameFromModel(Model);
+    var atributeConfig = Term.getAttributeConfig(modelName, modelAttribute);
 
     // check if model has the atribute
-    if ( modelAtribute.indexOf(modelAttribute) == -1 ) {
+    if ( !atributeConfig ) {
       sails.log.verbose('Term.updateModelTerms:Model atribute not found',modelName, modelAttribute);
       return res.badRequest('Invalid model atribute');
     }
@@ -67,24 +65,20 @@ module.exports = {
         return res.notFound();
       }
 
-      return Term.updateModelTermAssoc({
+      Term.updateModelTermAssoc({
         creator: req.user.id,
         modelId: modelId,
         modelName: modelName,
-        modelAttribute: modelAttribute,
         vocabulary: vocabulary,
+        modelAttribute: modelAttribute,
         terms: newTerms
       }, function(err, terms) {
         if (err) {
           sails.log.error('Error on update model terms', err);
           return res.serverError();
         }
-
-        return res.ok(terms);
+        res.ok(terms);
       })
-
     });
-
   }
-
 };
