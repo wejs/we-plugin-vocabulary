@@ -1,13 +1,13 @@
 {
   "name": "we-plugin-vocabulary",
   "description": "We.js plugin vocabulary",
-  "version": "0.0.10",
+  "version": "0.2.0",
   "license": "MIT",
   "main": "lib/index.js",
   "dependencies": {
     "async": "^0.9.0",
     "lodash": "^2.4.1",
-    "we-helpers": "^0.0.5"
+    "we-helpers": ">=0.0.7"
   },
   "devDependencies": {
     "mocha": "^1.18.2",
@@ -30,7 +30,10 @@
     "we.js",
     "wejs",
     "plugin",
-    "sails.js"
+    "sails.js",
+    "terms",
+    "tags",
+    "vocabulary"
   ],
   "repository": {
     "type": "git",
