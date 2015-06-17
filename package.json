@@ -1,42 +1,40 @@
 {
   "name": "we-plugin-vocabulary",
-  "description": "We.js plugin vocabulary",
-  "version": "0.2.2",
-  "license": "MIT",
+  "description": "We.js we-plugin-vocabulary plugin",
+  "version": "0.3.0",
   "main": "lib/index.js",
-  "dependencies": {
-    "async": "^0.9.0",
-    "lodash": "^2.4.1",
-    "we-helpers": ">=0.0.7"
-  },
-  "devDependencies": {
-    "mocha": "^1.18.2",
-    "istanbul": "^0.2.7",
-    "jshint": "^2.5.0",
-    "jscs": "^1.4.5"
-  },
-  "engines": {
-    "node": ">=0.10.0"
-  },
   "scripts": {
     "lint": "./node_modules/.bin/jshint .",
-    "checkStyle": "./node_modules/.bin/jscs .",
-    "pretest": "npm run-script lint && npm run-script checkStyle",
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha test",
-    "posttest": "./node_modules/.bin/istanbul check-coverage && rm -rf coverage",
+    "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js",
     "prepublish": "npm prune"
   },
-  "keywords": [
-    "we.js",
-    "wejs",
-    "plugin",
-    "sails.js",
-    "terms",
-    "tags",
-    "vocabulary"
-  ],
+  "dependencies": {
+    "async": "^1.2.0",
+    "lodash": "^3.9.3"
+  },
+  "devDependencies": {
+    "fs-extra": "^0.18.2",
+    "istanbul": "^0.3.14",
+    "jshint": "^2.8.0",
+    "mocha": "^2.2.5",
+    "rimraf": "^2.3.4",
+    "supertest": "^1.0.1",
+    "we-core": "^0.3.28",
+    "we-plugin-file": "^0.3.1",
+    "we-plugin-page": "^0.3.0",
+    "we-test-tools": "^0.3.4",
+    "we-theme-admin-default": "^0.3.1",
+    "we-theme-site-wejs": "^0.3.11"
+  },
+  "peerDependencies": {
+    "we-core": "~0.3"
+  },
   "repository": {
     "type": "git",
-    "url": "git@github.com:wejs/we-plugin-vocabulary.git"
-  }
+    "url": "git@github.com:wejs/we-plugin-form.git"
+  },
+  "publishConfig": {
+    "registry": "http://registry.npmjs.org"
+  },
+  "license": "MIT"
 }
