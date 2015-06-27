@@ -13,8 +13,8 @@
     "lodash": "^3.9.3"
   },
   "devDependencies": {
-    "fs-extra": "^0.18.2",
-    "istanbul": "^0.3.14",
+    "fs-extra": "^0.20.1",
+    "istanbul": "^0.3.16",
     "jshint": "^2.8.0",
     "mocha": "^2.2.5",
     "rimraf": "^2.3.4",
@@ -23,8 +23,8 @@
     "we-plugin-file": "^0.3.1",
     "we-plugin-page": "^0.3.0",
     "we-test-tools": "^0.3.4",
-    "we-theme-admin-default": "^0.3.1",
-    "we-theme-site-wejs": "^0.3.11"
+    "we-theme-admin-default": "^0.3.4",
+    "we-theme-site-wejs": "^0.3.14"
   },
   "peerDependencies": {
     "we-core": "~0.3"
