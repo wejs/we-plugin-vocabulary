@@ -240,7 +240,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
         query.then(function (result) {
           if ( _.isEmpty(result) ) {
-            log.verbose('term.on:createdResponse: Cant create the term:', term, fieldName);
+            log.verbose(
+              'term.on:createdResponse: Cant create the term assoc:', term, fieldName, fieldConfig.vocabularyName
+            );
             return nextTerm();
           }
 
@@ -380,8 +382,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     term.afterUpdatedRecord = function updatedResponse(r, opts, done) {
       var Model = this;
 
-      // console.log('>>opts', r); return;
-
       var termFields = term.getModelTermFields(this);
       if (!termFields) return done();
 
@@ -398,7 +398,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         async.series([
           // check if one of the new terms is salved
           function checkIfNeedsToSaveOrDelete(done) {
-
             for (var i = salvedTerms.length - 1; i >= 0; i--) {
               if (r.get(fieldName).indexOf(salvedTerms[i]) === -1) {
                 // delete
@@ -415,7 +414,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           function deleteTerms(done) {
             if (_.isEmpty(termsToDelete)) return done();
 
-            async.each(termsToDelete, function(termToDelete, next){
+            async.each(termsToDelete, function (termToDelete, next) {
               var objToDelete;
               for (var i = salvedmodelterms.length - 1; i >= 0; i--) {
                 if (salvedmodelterms[i].get('term').get('text') === termToDelete) {
@@ -429,7 +428,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
                 return next();
               }
 
-              objToDelete.destroy().then( function () {
+              objToDelete.destroy().then( function (r) {
                 salvedmodelterms.splice(i, 1);
                 next();
               }).catch(next);

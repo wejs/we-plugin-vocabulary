@@ -27,22 +27,14 @@ describe('termFeature', function () {
           var pageStub = stubs.pageStub(user.id);
           we.db.models.page.create(pageStub)
           .then(function (p) {
-            we.term.updateModelTerms(
-              pageStub.tags, 'page', p.id,
-              'tags',
-              we.db.models.page.options.termFields.tags,
-            function(err, tags) {
-              if (err) return done(err);
-              p.dataValues.tags = tags;
-              salvedPage = p;
-
-              return done();
-            });
-          })
+            salvedPage = p;
+            return done();
+          });
         });
       },
       function createVocabulary(done) {
         var vocabularyStub = stubs.vocabularyStub(salvedUser.id);
+        vocabularyStub.name = 'Category';
         we.db.models.vocabulary.create(vocabularyStub)
         .then(function (v) {
           salvedVocabulary = v;
@@ -51,12 +43,13 @@ describe('termFeature', function () {
       },
       function createTerms(done) {
         var termsStub = stubs.termsStub(
-          salvedUser.id, salvedVocabulary.id
+          salvedUser.id, salvedVocabulary.name
         );
         we.db.models.term.bulkCreate(termsStub)
         .then(function(){
-          we.db.models.term.find()
-          .then(function(ts){
+          we.db.models.term.findAll()
+          .then(function(ts) {
+
             savedTerms = ts;
             done();
           })
@@ -79,7 +72,7 @@ describe('termFeature', function () {
 
         var hasPageTags = false;
         res.body.page.forEach(function(page) {
-          if (page.id == salvedPage.id) {
+          if (page.id === salvedPage.id) {
             if (_.isEqual(page.tags, salvedPage.dataValues.tags) ) {
               hasPageTags = true;
             }
@@ -236,17 +229,8 @@ describe('termFeature', function () {
   describe('update', function () {
     it('put /page/:id should upate page terms and return page with new terms', function(done){
       var newTitle = 'my new title';
-
-      var newTags = [
-        'Futebol',
-        'Ze ramalho',
-        'Valderrama'
-      ];
-
-      var newCategories = [
-        'Universe',
-        'Saúde'
-      ];
+      var newTags = [ 'Futebol', 'Ze ramalho', 'Valderrama' ];
+      var newCategories = [ 'Universe', 'Saúde' ];
 
       request(http)
       .put('/page/' + salvedPage.id)
@@ -270,7 +254,8 @@ describe('termFeature', function () {
             field: 'tags'
           },
           include: [{ all: true,  attributes: ['text'] }]
-        }).then(function(result) {
+        }).then(function (result) {
+
           var terms = result.map(function(modelterm) {
             return modelterm.get().term.get().text;
           });
@@ -304,9 +289,9 @@ describe('termFeature', function () {
       request(http)
       .delete('/page/' + salvedPage.id)
       .set('Accept', 'application/json')
+      .expect(204)
       .end(function (err, res) {
         if (err) return done(err);
-        assert.equal(204, res.status);
 
         we.db.models.modelsterms.findAll({
           where: {
