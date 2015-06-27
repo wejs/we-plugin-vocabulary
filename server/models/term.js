@@ -14,19 +14,9 @@ module.exports = function Model(we) {
         type: we.db.Sequelize.STRING,
         allowNull: false
       },
-      description: {
-        type: we.db.Sequelize.TEXT
-      }
+      description: { type: we.db.Sequelize.TEXT },
+      vocabularyName: { type: we.db.Sequelize.STRING }
     },
-
-    associations: {
-      vocabulary: {
-        type: 'belongsTo',
-        model: 'vocabulary',
-        inverse: 'terms'
-      },
-    },
-
     options: {
       classMethods: {},
       instanceMethods: {},

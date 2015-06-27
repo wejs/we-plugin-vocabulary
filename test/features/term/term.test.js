@@ -113,7 +113,7 @@ describe('termFeature', function () {
 
     it('get /term?where should find terms without field and isNull where', function(done){
       var where = 'where=' + querystring.escape( JSON.stringify({
-        vocabularyId: null
+        vocabularyName: null
       }));
 
       request(http)
