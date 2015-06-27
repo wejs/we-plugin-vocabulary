@@ -21,8 +21,8 @@
     "supertest": "^1.0.1",
     "we-core": "^0.3.28",
     "we-plugin-file": "^0.3.1",
-    "we-plugin-page": "^0.3.0",
-    "we-test-tools": "^0.3.4",
+    "we-plugin-page": "^0.3.1",
+    "we-test-tools": "^0.3.5",
     "we-theme-admin-default": "^0.3.4",
     "we-theme-site-wejs": "^0.3.14"
   },
