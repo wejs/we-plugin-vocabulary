@@ -3,10 +3,8 @@
   {{{field-help-error error}}}
 
   <select id="{{fieldId}}" name="{{name}}"
-    we-vocabulary="{{field.vocabularyName}}"
     class="form-control" {{fieldAttrs}}
-    {{#if field.formFieldMultiple}}multiple="multiple"{{/if}}
-  >
+    {{#if field.formFieldMultiple}}multiple="multiple"{{/if}} we-select-url="/term" we-select-model="term">
     {{#each value}}
       <option value="{{this}}">{{this}}</option>
     {{/each}}
@@ -16,5 +14,7 @@
   {{{field-help-error error}}}
 </div>
 <script>$(document).ready(function() {
-  we.components.select.init('#{{fieldId}}');
+  we.components.select.init('#{{fieldId}}',{
+    where: { vocabularyName: '{{field.vocabularyName}}' }
+  });
 });</script>
