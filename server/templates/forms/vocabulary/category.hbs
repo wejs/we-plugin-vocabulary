@@ -5,9 +5,13 @@
   <select id="{{fieldId}}" name="{{name}}"
     class="form-control" {{fieldAttrs}}
     {{#if field.formFieldMultiple}}multiple="multiple"{{/if}} we-select-url="/term" we-select-model="term">
-    {{#each value}}
-      <option value="{{this}}">{{this}}</option>
-    {{/each}}
+    {{#isArray value}}
+      {{#each value}}
+        <option selected="selected" value="{{this}}">{{this}}</option>
+      {{/each}}
+    {{else}}
+      <option selected="selected" value="{{value}}">{{value}}</option>
+    {{/isArray}}
   </select>
 
   <p class="help-block">{{t help}}</p>
