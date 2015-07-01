@@ -6,14 +6,15 @@
     class="form-control" {{fieldAttrs}}
     {{#if field.formFieldMultiple}}multiple="multiple"{{/if}}
     we-select-url="/term" we-select-model="term">
-
-    {{#isArray value}}
-      {{#each value}}
-        <option selected="selected" value="{{this}}">{{this}}</option>
-      {{/each}}
-    {{else}}
-      <option selected="selected" value="{{value}}">{{value}}</option>
-    {{/isArray}}
+    {{#if value}}
+      {{#isArray value}}
+        {{#each value}}
+          <option selected="selected" value="{{this}}">{{this}}</option>
+        {{/each}}
+      {{else}}
+        <option selected="selected" value="{{value}}">{{value}}</option>
+      {{/isArray}}
+    {{/if}}
   </select>
 
   <p class="help-block">{{t help}}</p>
@@ -22,6 +23,16 @@
 <script>$(document).ready(function() {
   we.components.select.init('#{{fieldId}}', {
     tags: true,
-    where: { vocabularyName: '{{field.vocabularyName}}' }
+    where: { vocabularyName: '{{field.vocabularyName}}' },
+    processResults: function processResults(data, params) {
+      var values = null;
+      if (data.term) {
+        values = data.term.map(function(v){ return { id: v.text, text: v.text }; });
+      }
+      if (values) values.unshift( {
+        text: params.term, id: params.term
+      });
+      return { results: values};
+    }
   });
 });</script>
