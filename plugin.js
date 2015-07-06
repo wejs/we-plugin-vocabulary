@@ -127,10 +127,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     }
   });
 
-
   plugin.setTemplates({
     'forms/vocabulary/tag': __dirname + '/server/templates/forms/vocabulary/tag.hbs',
     'forms/vocabulary/category': __dirname + '/server/templates/forms/vocabulary/category.hbs',
+  });
+
+  plugin.setHelpers({
+    'we-terms': __dirname + '/server/helpers/we-terms.js'
   });
 
   // use before instance to set sequelize virtual fields for term fields
@@ -230,7 +233,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             }
           });
         } else {
-         query = db.models.term.find({
+          query = db.models.term.find({
             where: {
               text: term,
               vocabularyName: fieldConfig.vocabularyName
