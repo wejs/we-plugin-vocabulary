@@ -190,7 +190,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     var term = {};
 
     term.getModelTermFields = function(Model) {
-      if (!Model.options || !Model.options.termFields) return null;
+      if (!Model || !Model.options || !Model.options.termFields) return null;
       return Model.options.termFields;
     }
 
