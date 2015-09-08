@@ -14,8 +14,12 @@ module.exports = function Model(we) {
         type: we.db.Sequelize.STRING,
         allowNull: false
       },
-      description: { type: we.db.Sequelize.TEXT },
-      vocabularyName: { type: we.db.Sequelize.STRING }
+      description: {
+        type: we.db.Sequelize.TEXT
+      },
+      vocabularyName: {
+        type: we.db.Sequelize.STRING
+      }
     },
     options: {
       classMethods: {},

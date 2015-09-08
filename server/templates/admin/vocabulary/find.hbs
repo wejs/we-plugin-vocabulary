@@ -1,0 +1,39 @@
+<div class="actions">
+{{we-action-create-btn resourceName req}}
+</div>
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>{{t 'name'}}</th>
+      <th>{{t 'actions'}}</th>
+    </tr>
+  </thead>
+  <tbody>
+
+{{#each record}}
+  <tr>
+    <td>{{id}}</td>
+    <td>{{name}}</td>
+    <td>
+      {{we-action-view-btn ../resourceName this ../req id}}
+      {{we-action-edit-btn ../resourceName this ../req id}}
+      {{we-action-delete-btn ../resourceName this ../req id}}
+
+      {{#link-to 'admin.term.find' id class="btn btn-default btn-sm"}}
+        <i class="fa fa-tags"></i> {{t 'terms'}}
+      {{/link-to}}
+    </td>
+  </tr>
+{{/each}}
+
+  </tbody>
+  <tfoot>
+    <td colspan="3">
+      <div class="paginate-sumary">
+        {{t 'paginate.sumary' recordsLength=record.length count=metadata.count}}
+      </div>
+      {{paginate count=metadata.count limit=query.limit currentPage=query.page req=req}}
+    </td>
+  </tfoot>
+</table>

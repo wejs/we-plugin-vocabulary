@@ -53,6 +53,48 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       }
     }
   });
+
+  plugin.setResource({
+    namePrefix: 'admin.',
+    name: 'vocabulary',
+    namespace: '/admin',
+    templateFolderPrefix: 'admin/',
+    // findAll: {
+    //   search: {
+    //     id:  {
+    //       parser: 'equal',
+    //       target: {
+    //         type: 'field',
+    //         field: 'id'
+    //       }
+    //     },
+    //     email:  {
+    //       parser: 'equal',
+    //       target: {
+    //         type: 'association',
+    //         model: 'user',
+    //         field: 'email'
+    //       }
+    //     },
+    //     displayName:  {
+    //       parser: 'contains',
+    //       target: {
+    //         type: 'association',
+    //         model: 'user',
+    //         field: 'displayName'
+    //       }
+    //     }
+    //   }
+    // }
+  });
+
+  plugin.setResource({
+    namePrefix: 'admin.',
+    parent: 'admin.vocabulary',
+    name: 'term',
+    templateFolderPrefix: 'admin/'
+  });
+
   // ser plugin routes
   plugin.setRoutes({
     // Term
@@ -125,6 +167,37 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'vocabulary',
       permission    : 'delete_vocabulary'
     }
+  });
+
+  plugin.hooks.on('we-plugin-menu:after:set:core:menus', function (data, done) {
+    var we = data.req.we;
+    // set admin menu
+    if (data.res.locals.isAdmin) {
+      data.res.locals.adminMenu.addLink({
+        id: 'admin.vocabulary',
+        text: '<i class="fa fa-tags"></i> '+
+          data.req.__('vocabulary.find'),
+        href: we.router.urlTo( 'admin.vocabulary.find', [], we),
+        weight: 10
+      });
+    }
+
+    done();
+  });
+
+
+  plugin.events.on('we:express:set:params', function(data) {
+    // user pre-loader
+    data.express.param('vocabularyId', function (req, res, next, id) {
+      if (!/^\d+$/.exec(String(id))) return res.notFound();
+      data.we.db.models.vocabulary.findById(id)
+      .then(function (v) {
+        if (!v) return res.notFound();
+        res.locals.currentVocabulary = v;
+        req.params.vocabularyName = v.name;
+        next();
+      });
+    })
   });
 
   // use before instance to set sequelize virtual fields for term fields

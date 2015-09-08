@@ -1,14 +1,69 @@
 /**
- * TermController
+ * term Controller
  *
  * @module    :: Controller
  * @description :: Contains logic for handling requests.
  */
-
-// we.js controller utils
-var _ = require('lodash');
-
 module.exports = {
+  create: function create(req, res) {
+    if (!res.locals.template) res.locals.template = res.locals.model + '/' + 'create';
+
+    if (!res.locals.record) res.locals.record = {};
+
+    req.we.utils._.merge(res.locals.record, req.query);
+
+    if (req.method === 'POST') {
+      if (req.isAuthenticated()) req.body.creatorId = req.user.id;
+
+      // set temp record for use in validation errors
+      res.locals.record = req.query;
+      req.we.utils.req.we.utils._.merge(res.locals.record, req.body);
+
+      return res.locals.Model.create(req.body)
+      .then(function (record) {
+        res.locals.record = record;
+        res.created();
+      }).catch(res.queryError);
+    } else {
+      if (!req.params.vocabularyId) return res.notFound();
+
+      req.we.db.models.vocabulary.findById(req.params.vocabularyId)
+      .then(function (v){
+        if (!v) return res.notFound();
+
+        res.locals.record = req.query;
+        res.locals.record.vocabularyName = v.name;
+        res.ok();
+      }).catch(res.queryError);
+    }
+  },
+  find: function findAll(req, res, next) {
+    if (req.params.vocabularyId) {
+      if (
+        req.params.vocabularyId == 0 ||
+        req.params.vocabularyId == 'null'
+      ) {
+        res.locals.query.where.vocabularyName = null;
+        findTerms(req, res, next);
+      } else {
+        // check if related vocabulary exists
+        req.we.db.models.vocabulary
+        .findById(req.params.vocabularyId)
+        .then(function (v){
+          if (!v) return res.notFound();
+
+          res.locals.query.where.vocabularyName = v.name;
+
+          findTerms(req, res, next);
+        }).catch(res.queryError);
+      }
+
+
+    } else {
+      findTerms(req, res, next);
+    }
+  },
+
   findTermTexts: function(req, res) {
     res.locals.query.attributes = ['text'];
 
@@ -23,77 +78,18 @@ module.exports = {
         }
       });
     });
-  },
-
-
-  // updateModelTerms: function updateModelTerms (req, res, next) {
-  //   // TODO migrate to we.js 0.3.x
-  //   var sails = req._sails;
-  //   var Term = sails.models.term;
-
-  //   var modelName = req.param('modelName');
-  //   var modelId = req.param('modelId');
-  //   var modelAttribute = req.param('modelAttribute');
-  //   var newTerms = req.param('terms');
-
-  //   var vocabulary = req.param('vocabulary');
-
-  //   if (_.isEmpty(vocabulary)) {
-  //     vocabulary = null;
-  //   }
-
-  //   if (_.isEmpty(newTerms)) {
-  //     newTerms = [];
-  //   }
-
-  //   // skip if dont have one of the required vars
-  //   if (_.isEmpty(modelName) || _.isEmpty(modelId) || _.isEmpty(modelAttribute) ){
-  //     sails.log.verbose('Cant find modelName, modelId, or attribute');
-  //     return next();
-  //   }
-
-  //   // check if model exists
-  //   if (!sails.models[modelName]) {
-  //     return res.badRequest('Model not found');
-  //   }
-
-  //   var Model = sails.models[modelName];
-
-  //   var atributeConfig = Term.getAttributeConfig(modelName, modelAttribute);
-
-  //   // check if model has the atribute
-  //   if ( !atributeConfig ) {
-  //     sails.log.verbose('Term.updateModelTerms:Model atribute not found',modelName, modelAttribute);
-  //     return res.badRequest('Invalid model atribute');
-  //   }
-
-  //   return Model.findOne({ id: modelId })
-  //   .exec(function (err, record) {
-  //     if (err) {
-  //       sails.log.error('Term.updateModelTerms:Error on find model by id', record);
-  //       return res.negotiate(err);
-  //     }
-
-  //     // record not found
-  //     if (_.isEmpty(record)) {
-  //       sails.log.verbose('Term.updateModelTerms:Error record not found', modelName, modelId);
-  //       return res.notFound();
-  //     }
-
-  //     Term.updateModelTermAssoc({
-  //       creator: req.user.id,
-  //       modelId: modelId,
-  //       modelName: modelName,
-  //       vocabulary: vocabulary,
-  //       modelAttribute: modelAttribute,
-  //       terms: newTerms
-  //     }, function(err, terms) {
-  //       if (err) {
-  //         sails.log.error('Error on update model terms', err);
-  //         return res.serverError();
-  //       }
-  //       res.ok(terms);
-  //     })
-  //   });
-  // }
+  }
 };
+
+
+function findTerms(req, res, next) {
+  return res.locals.Model.findAndCountAll(res.locals.query)
+  .then(function (record) {
+    if (!record) return next();
+
+    res.locals.metadata.count = record.count;
+    res.locals.record = record.rows;
+
+    return res.ok();
+  });
+}

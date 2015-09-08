@@ -11,13 +11,14 @@ module.exports = function Model(we) {
   // set sequelize model define and options
   var model = {
     definition: {
-      creatorId: { type: we.db.Sequelize.BIGINT },
-
+      creatorId: {
+        type: we.db.Sequelize.BIGINT,
+        formFieldType: null
+      },
       name: {
         type: we.db.Sequelize.STRING,
         unique: true
       },
-
       description: {
         type: we.db.Sequelize.TEXT
       }
