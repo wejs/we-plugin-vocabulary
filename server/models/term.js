@@ -22,6 +22,7 @@ module.exports = function Model(we) {
       }
     },
     options: {
+      titleField: 'text',
       classMethods: {},
       instanceMethods: {},
       hooks: {}

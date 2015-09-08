@@ -11,10 +11,6 @@ module.exports = function Model(we) {
   // set sequelize model define and options
   var model = {
     definition: {
-      creatorId: {
-        type: we.db.Sequelize.BIGINT,
-        formFieldType: null
-      },
       name: {
         type: we.db.Sequelize.STRING,
         unique: true
@@ -23,8 +19,14 @@ module.exports = function Model(we) {
         type: we.db.Sequelize.TEXT
       }
     },
-
+    associations: {
+      creator: {
+        type: 'belongsTo',
+        model: 'user'
+      }
+    },
     options: {
+      titleField: 'name',
       classMethods: {},
       instanceMethods: {},
       hooks: {
