@@ -1,7 +1,7 @@
 {
   "name": "we-plugin-vocabulary",
   "description": "We.js we-plugin-vocabulary plugin",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "main": "lib/index.js",
   "scripts": {
     "lint": "./node_modules/.bin/jshint .",
@@ -25,9 +25,6 @@
     "we-test-tools": "^0.3.5",
     "we-theme-admin-default": "^0.3.4",
     "we-theme-site-wejs": "^0.3.14"
-  },
-  "peerDependencies": {
-    "we-core": "~0.3"
   },
   "repository": {
     "type": "git",
