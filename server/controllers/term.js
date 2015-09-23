@@ -17,7 +17,7 @@ module.exports = {
 
       // set temp record for use in validation errors
       res.locals.record = req.query;
-      req.we.utils.req.we.utils._.merge(res.locals.record, req.body);
+      req.we.utils._.merge(res.locals.record, req.body);
 
       return res.locals.Model.create(req.body)
       .then(function (record) {
