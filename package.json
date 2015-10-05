@@ -26,9 +26,6 @@
     "we-theme-admin-default": "^0.3.4",
     "we-theme-site-wejs": "^0.3.14"
   },
-  "peerDependencies": {
-    "we-core": "~0.3"
-  },
   "repository": {
     "type": "git",
     "url": "git@github.com:wejs/we-plugin-form.git"
