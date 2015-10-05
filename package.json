@@ -19,10 +19,10 @@
     "mocha": "^2.2.5",
     "rimraf": "^2.3.4",
     "supertest": "^1.0.1",
-    "we-core": "^0.3.28",
+    "we-core": "wejs/we-core",
     "we-plugin-file": "^0.3.1",
-    "we-plugin-page": "^0.3.1",
-    "we-test-tools": "^0.3.5",
+    "we-plugin-page": "^0.3.2",
+    "we-test-tools": "wejs/we-test-tools",
     "we-theme-admin-default": "^0.3.4",
     "we-theme-site-wejs": "^0.3.14"
   },

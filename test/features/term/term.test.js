@@ -239,8 +239,10 @@ describe('termFeature', function () {
         tags: newTags,
         categories: newCategories
       })
+      .expect(200)
       .set('Accept', 'application/json')
       .end(function (err, res) {
+        console.log(err, res.text)
         if (err) return done(err);
         assert.equal(200, res.status);
         assert(res.body.page);

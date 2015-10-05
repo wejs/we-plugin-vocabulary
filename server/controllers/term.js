@@ -8,20 +8,20 @@ module.exports = {
   create: function create(req, res) {
     if (!res.locals.template) res.locals.template = res.locals.model + '/' + 'create';
 
-    if (!res.locals.record) res.locals.record = {};
+    if (!res.locals.data) res.locals.data = {};
 
-    req.we.utils._.merge(res.locals.record, req.query);
+    req.we.utils._.merge(res.locals.data, req.query);
 
     if (req.method === 'POST') {
       if (req.isAuthenticated()) req.body.creatorId = req.user.id;
 
       // set temp record for use in validation errors
-      res.locals.record = req.query;
-      req.we.utils.req.we.utils._.merge(res.locals.record, req.body);
+      res.locals.data = req.query;
+      req.we.utils.req.we.utils._.merge(res.locals.data, req.body);
 
       return res.locals.Model.create(req.body)
       .then(function (record) {
-        res.locals.record = record;
+        res.locals.data = record;
         res.created();
       }).catch(res.queryError);
     } else {
@@ -31,8 +31,8 @@ module.exports = {
       .then(function (v){
         if (!v) return res.notFound();
 
-        res.locals.record = req.query;
-        res.locals.record.vocabularyName = v.name;
+        res.locals.data = req.query;
+        res.locals.data.vocabularyName = v.name;
         res.ok();
       }).catch(res.queryError);
     }
@@ -88,7 +88,7 @@ function findTerms(req, res, next) {
     if (!record) return next();
 
     res.locals.metadata.count = record.count;
-    res.locals.record = record.rows;
+    res.locals.data = record.rows;
 
     return res.ok();
   });

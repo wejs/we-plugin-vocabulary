@@ -124,13 +124,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     'put /term/:id([0-9]+)': {
       controller    : 'term',
-      action        : 'update',
+      action        : 'edit',
       model         : 'term',
       permission    : 'update_term'
     },
     'delete /term/:id([0-9]+)': {
       controller    : 'term',
-      action        : 'destroy',
+      action        : 'delete',
       model         : 'term',
       permission    : 'delete_term'
     },
@@ -157,13 +157,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     },
     'put /vocabulary/:id([0-9]+)': {
       controller    : 'vocabulary',
-      action        : 'update',
+      action        : 'edit',
       model         : 'vocabulary',
       permission    : 'update_vocabulary'
     },
     'delete /vocabulary/:id([0-9]+)': {
       controller    : 'vocabulary',
-      action        : 'destroy',
+      action        : 'delete',
       model         : 'vocabulary',
       permission    : 'delete_vocabulary'
     }
