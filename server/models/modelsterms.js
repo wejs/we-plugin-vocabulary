@@ -27,7 +27,7 @@ module.exports = function Model(we) {
       },
       order: {
         type: we.db.Sequelize.BOOLEAN,
-        defaultValue: 0
+        defaultValue: false
       },
       vocabularyName: {
         type: we.db.Sequelize.STRING
