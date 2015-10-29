@@ -175,9 +175,8 @@ describe('termFeature', function () {
       .end(function (err, res) {
         if (err) return done(err);
         assert(res.body.vocabulary);
-        assert( _.isArray(res.body.vocabulary) , 'vocabulary not is array');
-        assert.equal(res.body.vocabulary[0].id, salvedVocabulary.id);
-        assert.equal(res.body.vocabulary[0].name, salvedVocabulary.name);
+        assert.equal(res.body.vocabulary.id, salvedVocabulary.id);
+        assert.equal(res.body.vocabulary.name, salvedVocabulary.name);
         done();
       });
     });
@@ -198,13 +197,13 @@ describe('termFeature', function () {
 
         assert.equal(201, res.status);
         assert(res.body.page);
-        assert(res.body.page[0].title, pageStub.title);
-        assert(res.body.page[0].about, pageStub.about);
-        assert(res.body.page[0].body, pageStub.body);
+        assert(res.body.page.title, pageStub.title);
+        assert(res.body.page.about, pageStub.about);
+        assert(res.body.page.body, pageStub.body);
 
         var hasAllTags = true;
         for (var i = pageStub.tags.length - 1; i >= 0; i--) {
-          if ( res.body.page[0].tags.indexOf(pageStub.tags[i]) == -1 ) {
+          if ( res.body.page.tags.indexOf(pageStub.tags[i]) == -1 ) {
             hasAllTags = false;
             break;
           }
@@ -212,12 +211,12 @@ describe('termFeature', function () {
         assert(hasAllTags, 'Have all tags');
 
         assert(
-          res.body.page[0].categories.indexOf('Saúde') >-1,
+          res.body.page.categories.indexOf('Saúde') >-1,
           'Has category Saúde'
         );
 
         assert(
-          res.body.page[0].categories.indexOf('Saúde') -1,
+          res.body.page.categories.indexOf('Saúde') -1,
           'Dont have the category Entreterimento'
         );
 
@@ -246,7 +245,7 @@ describe('termFeature', function () {
         if (err) return done(err);
         assert.equal(200, res.status);
         assert(res.body.page);
-        assert(res.body.page[0].title, newTitle);
+        assert(res.body.page.title, newTitle);
         salvedPage.title = newTitle;
 
         we.db.models.modelsterms.findAll({
