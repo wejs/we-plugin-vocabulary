@@ -29,14 +29,6 @@ module.exports = function(we) {
     }
 
     html += '</ul>';
-    return html;
+    return new we.hbs.SafeString(html);
   }
 }
-
-// we-tag.hbs
-
-// <ul class="tags">
-//   <li><a href="#">tag</a></li>
-//   <li><a href="#">tag name</a></li>
-
-// </ul>

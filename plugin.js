@@ -54,40 +54,14 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     }
   });
 
+  // admin vocabulary resource
   plugin.setResource({
     namePrefix: 'admin.',
     name: 'vocabulary',
     namespace: '/admin',
-    templateFolderPrefix: 'admin/',
-    // findAll: {
-    //   search: {
-    //     id:  {
-    //       parser: 'equal',
-    //       target: {
-    //         type: 'field',
-    //         field: 'id'
-    //       }
-    //     },
-    //     email:  {
-    //       parser: 'equal',
-    //       target: {
-    //         type: 'association',
-    //         model: 'user',
-    //         field: 'email'
-    //       }
-    //     },
-    //     displayName:  {
-    //       parser: 'contains',
-    //       target: {
-    //         type: 'association',
-    //         model: 'user',
-    //         field: 'displayName'
-    //       }
-    //     }
-    //   }
-    // }
+    templateFolderPrefix: 'admin/'
   });
-
+  // terms admin resource
   plugin.setResource({
     namePrefix: 'admin.',
     parent: 'admin.vocabulary',
@@ -104,7 +78,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'term',
       responseType  : 'json'
     },
-    'get /term/:id([0-9]+)': {
+    'get /term/:termId([0-9]+)': {
+      name          : 'term.findOne',
       controller    : 'term',
       action        : 'findOne',
       model         : 'term',
@@ -114,7 +89,24 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       controller    : 'term',
       action        : 'find',
       model         : 'term',
-      permission    : 'find_term'
+      permission    : 'find_term',
+
+      search: {
+        text:  {
+          parser: 'startsWith',
+          target: {
+            type: 'field',
+            field: 'text'
+          }
+        },
+        vocabularyName: {
+          parser: 'equal',
+          target: {
+            type: 'field',
+            field: 'vocabularyName'
+          }
+        }
+      }
     },
     'post /term': {
       controller    : 'term',
@@ -412,7 +404,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           return db.models.modelsterms.findAll({
             where: { modelName: Model.name, modelId: r.id, field: fieldName },
             attributes: ['id'],
-            include: [{ all: true,  attributes: ['text'] }]
+            include: [{ all: true,  attributes: ['id', 'text'] }]
           }).then(function (modelterms) {
             if (_.isEmpty(modelterms)) return next();
             // save models terms assoc as cache
@@ -530,7 +522,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       return db.models.modelsterms.findAll({
         where: { modelName: modelName, modelId: record.id, field: fieldName },
         attributes: ['id'],
-        include: [{ all: true,  attributes: ['text'] }]
+        include: [{ all: true,  attributes: ['id', 'text'] }]
       }).then(function (modelterms) {
         if (_.isEmpty(modelterms)) return next();
 
