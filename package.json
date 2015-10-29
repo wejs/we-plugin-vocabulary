@@ -1,30 +1,26 @@
 {
   "name": "we-plugin-vocabulary",
   "description": "We.js we-plugin-vocabulary plugin",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "main": "lib/index.js",
   "scripts": {
     "lint": "./node_modules/.bin/jshint .",
     "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js",
     "prepublish": "npm prune"
   },
-  "dependencies": {
-    "async": "^1.2.0",
-    "lodash": "^3.9.3"
-  },
   "devDependencies": {
-    "fs-extra": "^0.20.1",
-    "istanbul": "^0.3.16",
+    "fs-extra": "^0.26.0",
+    "istanbul": "^0.4.0",
     "jshint": "^2.8.0",
-    "mocha": "^2.2.5",
-    "rimraf": "^2.3.4",
-    "supertest": "^1.0.1",
-    "we-core": "wejs/we-core",
-    "we-plugin-file": "^0.3.1",
+    "mocha": "^2.3.3",
+    "rimraf": "^2.4.3",
+    "supertest": "^1.1.0",
+    "we-core": "0.3.99",
+    "we-plugin-file": "^0.3.15",
     "we-plugin-page": "^0.3.2",
-    "we-test-tools": "wejs/we-test-tools",
-    "we-theme-admin-default": "^0.3.4",
-    "we-theme-site-wejs": "^0.3.14"
+    "we-test-tools": "0.3.9",
+    "we-theme-admin-default": "^0.3.10",
+    "we-theme-site-wejs": "^0.3.30"
   },
   "repository": {
     "type": "git",

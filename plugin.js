@@ -3,9 +3,6 @@
  *
  * see http://wejs.org/docs/we/extend.plugin
  */
-var async = require('async');
-var _ = require('lodash');
-
 module.exports = function loadPlugin(projectPath, Plugin) {
   var plugin = new Plugin(__dirname);
   // set plugin configs
@@ -201,7 +198,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
         for (f in models[modelName].options.termFields) {
           // set field configs
-          cfgs = _.clone(models[modelName].options.termFields[f]);
+          cfgs = we.utils._.clone(models[modelName].options.termFields[f]);
           cfgs.type = we.db.Sequelize.VIRTUAL;
           // set virtual setter
           cfgs.set = we.term.getSetTermTag(f, cfgs.onlyLowercase);
@@ -225,13 +222,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     for (var modelName in models) {
       var termFields = we.term.getModelTermFields(we.db.modelsConfigs[modelName]);
 
-      if ( _.isEmpty(termFields) ) continue;
+      if ( we.utils._.isEmpty(termFields) ) continue;
 
       models[modelName]
       .addHook('afterFind', 'loadTerms', function afterFind(r, opts, done) {
         var Model = this;
-        if ( _.isArray(r) ) {
-          async.eachSeries(r, function (r1, next) {
+        if ( we.utils._.isArray(r) ) {
+          we.utils.async.eachSeries(r, function (r1, next) {
             we.term.afterFindRecord.bind(Model)(r1, opts, next);
           }, done);
         } else {
@@ -272,7 +269,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     term.createModelTerms = function createModelTerms(terms, modelName, modelId, fieldName, fieldConfig, done) {
       var salvedTerms = [];
 
-      async.eachSeries(terms, function (term, nextTerm){
+      we.utils.async.eachSeries(terms, function (term, nextTerm){
         var query;
 
         if (fieldConfig.onlyLowercase) term = term.toLowerCase();
@@ -298,7 +295,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         }
 
         query.then(function (result) {
-          if ( _.isEmpty(result) ) {
+          if ( we.utils._.isEmpty(result) ) {
             log.verbose(
               'term.on:createdResponse: Cant create the term assoc:', term, fieldName, fieldConfig.vocabularyName
             );
@@ -306,7 +303,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           }
 
           var termObj;
-          if (_.isArray(result)) {
+          if (we.utils._.isArray(result)) {
             termObj = result[0];
           } else {
             termObj = result;
@@ -336,7 +333,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         return function setTermTag(val) {
           if (typeof val === 'string') {
             this.setDataValue(fieldName, [val.toLowerCase()]);
-          } else if ( _.isArray(val) ) {
+          } else if ( we.utils._.isArray(val) ) {
             this.setDataValue(fieldName, val.map(function (v) {
               return v.toLowerCase();
             }));
@@ -363,7 +360,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       var fieldNames = Object.keys(termFields);
 
       fieldNames.forEach(function (fieldName) {
-        if (_.isEmpty(r.get(fieldName))) return;
+        if (we.utils._.isEmpty(r.get(fieldName))) return;
 
         functions.push(function (next) {
           term.createModelTerms(
@@ -379,7 +376,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           });
         });
       });
-      async.series(functions, done);
+      we.utils.async.series(functions, done);
     }
     /**
      * Load record terms after find record
@@ -406,7 +403,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             attributes: ['id'],
             include: [{ all: true,  attributes: ['id', 'text'] }]
           }).then(function (modelterms) {
-            if (_.isEmpty(modelterms)) return next();
+            if (we.utils._.isEmpty(modelterms)) return next();
             // save models terms assoc as cache
             r._salvedModelTerms[fieldName] = modelterms;
 
@@ -421,7 +418,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         });
       });
 
-      async.series(functions, done);
+      we.utils.async.series(functions, done);
     }
 
     term.afterDeleteRecord = function deletedResponse(r, opts, done) {
@@ -445,16 +442,16 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       if (!termFields) return done();
 
       var fieldNames = Object.keys(termFields);
-      async.eachSeries(fieldNames, function (fieldName, nextField) {
+      we.utils.async.eachSeries(fieldNames, function (fieldName, nextField) {
         // check if user whant update this field
         if (opts.fields.indexOf(fieldName) === -1) return nextField();
 
         var salvedmodelterms = (r._salvedModelTerms[fieldName] || []);
         var salvedTerms = (r._salvedTerms[fieldName] || []);
         var termsToDelete = [];
-        var termsToSave = _.clone( r.get(fieldName) );
+        var termsToSave = we.utils._.clone( r.get(fieldName) );
 
-        async.series([
+        we.utils.async.series([
           // check if one of the new terms is salved
           function checkIfNeedsToSaveOrDelete(done) {
             for (var i = salvedTerms.length - 1; i >= 0; i--) {
@@ -471,9 +468,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           },
           // delete removed terms
           function deleteTerms(done) {
-            if (_.isEmpty(termsToDelete)) return done();
+            if (we.utils._.isEmpty(termsToDelete)) return done();
 
-            async.each(termsToDelete, function (termToDelete, next) {
+            we.utils.async.each(termsToDelete, function (termToDelete, next) {
               var objToDelete;
               for (var i = salvedmodelterms.length - 1; i >= 0; i--) {
                 if (salvedmodelterms[i].get('term').get('text') === termToDelete) {
@@ -487,7 +484,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
                 return next();
               }
 
-              objToDelete.destroy().then( function (r) {
+              objToDelete.destroy().then( function () {
                 salvedmodelterms.splice(i, 1);
                 next();
               }).catch(next);
@@ -495,7 +492,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           },
           // save new terms
           function saveTerms(done) {
-            if (_.isEmpty(termsToSave)) return done();
+            if (we.utils._.isEmpty(termsToSave)) return done();
             term.createModelTerms(
               termsToSave,
               Model.name, r.id,
@@ -524,7 +521,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         attributes: ['id'],
         include: [{ all: true,  attributes: ['id', 'text'] }]
       }).then(function (modelterms) {
-        if (_.isEmpty(modelterms)) return next();
+        if (we.utils._.isEmpty(modelterms)) return next();
 
         var terms = modelterms.map(function (modelterm) {
           return modelterm.get().term.get().text;

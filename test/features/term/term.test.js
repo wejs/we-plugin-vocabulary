@@ -2,11 +2,9 @@ var assert = require('assert');
 var request = require('supertest');
 var helpers = require('we-test-tools').helpers;
 var stubs = require('we-test-tools').stubs;
-var _ = require('lodash');
-var async = require('async');
 var querystring = require('querystring');
 var http;
-var we;
+var we, async,_;
 
 describe('termFeature', function () {
   var salvedPage, salvedUser, salvedUserPassword, salvedVocabulary, savedTerms;
@@ -14,6 +12,8 @@ describe('termFeature', function () {
   before(function (done) {
     http = helpers.getHttp();
     we = helpers.getWe();
+    async = we.utils.async;
+    _ = we.utils._;
 
     async.series([
       function (done) {

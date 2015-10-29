@@ -5,8 +5,6 @@
  * @description :: [Add info about you model here]
  *
  */
-var async = require('async');
-
 module.exports = function Model(we) {
   // set sequelize model define and options
   var model = {
@@ -31,7 +29,7 @@ module.exports = function Model(we) {
       instanceMethods: {},
       hooks: {
         afterDestroy: function(r, opts, done) {
-          async.parallel([
+          we.utils.async.parallel([
             function destroyRelatedModelsterms(cb) {
               we.db.models.modelsterms.destroy({
                 where: { vocabularyName: r.name }
