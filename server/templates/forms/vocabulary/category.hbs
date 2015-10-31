@@ -21,7 +21,7 @@
 </div>
 <script>$(document).ready(function() {
   we.components.select.init('#{{fieldId}}',{
-    where: { vocabularyName: '{{field.vocabularyName}}' },
+    url: '/vocabulary/{{field.vocabularyName}}/term',
     processResults: function processResults(data, params) {
       var values = null;
       if (data.term) {

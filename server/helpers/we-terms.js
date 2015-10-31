@@ -1,7 +1,7 @@
 /**
  * We tag helper
  *
- * usage: {{we-terms term}}
+ * usage: {{we-terms term vocabularyName="Category"}}
  */
 
 module.exports = function(we) {
@@ -12,7 +12,7 @@ module.exports = function(we) {
    */
   return function render(terms) {
     var options = arguments[arguments.length-1];
-    var html = '';
+    var html = '', vocabularyName;
 
     var attributes = [];
     // pass helper attributes to link element
@@ -20,11 +20,13 @@ module.exports = function(we) {
       attributes.push(attributeName + '="' + options.hash[attributeName] + '"');
     }
 
+    vocabularyName = options.hash.vocabularyName || 'Tags';
+
     html += '<ul class="tags" >';
 
     if (terms) {
       for (var i = 0; i < terms.length; i++) {
-        html += '<li><a class="term-link" href="#">'+terms[i]+'</a></li>';
+        html += '<li><a class="term-link" href="/vocabulary/'+vocabularyName+'/'+terms[i]+'">'+terms[i]+'</a></li>';
       }
     }
 

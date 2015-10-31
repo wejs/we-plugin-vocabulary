@@ -38,30 +38,23 @@ module.exports = {
     }
   },
   find: function findAll(req, res, next) {
-    if (req.params.vocabularyId) {
-      if (
-        req.params.vocabularyId == 0 ||
-        req.params.vocabularyId == 'null'
-      ) {
-        res.locals.query.where.vocabularyName = null;
-        findTerms(req, res, next);
-      } else {
-        // check if related vocabulary exists
-        req.we.db.models.vocabulary
-        .findById(req.params.vocabularyId)
-        .then(function (v){
-          if (!v) return res.notFound();
+    if (!res.locals.currentVocabulary) return next();
 
-          res.locals.query.where.vocabularyName = v.name;
+    res.locals.query.where.vocabularyName = res.locals.currentVocabulary.name;
+    findTerms(req, res, next);
+  },
 
-          findTerms(req, res, next);
-        }).catch(res.queryError);
-      }
+  findOne: function findOne(req, res, next) {
+    if (!res.locals.data) return next();
 
+    res.locals.data.loadRelatedRecords(res.locals.query, function (err, r){
+      if (err) return next(err);
 
-    } else {
-      findTerms(req, res, next);
-    }
+      res.locals.relatedModels = r.rows;
+      res.locals.metadata.relatedModelsCount = r.count;
+
+      return res.ok();
+    });
   },
 
   findTermTexts: function(req, res) {
@@ -80,7 +73,6 @@ module.exports = {
     });
   }
 };
-
 
 function findTerms(req, res, next) {
   return res.locals.Model.findAndCountAll(res.locals.query)

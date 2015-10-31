@@ -66,6 +66,31 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     templateFolderPrefix: 'admin/'
   });
 
+
+  // Vocabulary resrouces
+  plugin.setResource({ name: 'vocabulary' });
+  // terms admin resource
+  plugin.setResource({
+    parent: 'vocabulary',
+    name: 'term',
+    search: {
+      text:  {
+        parser: 'startsWith',
+        target: {
+          type: 'field',
+          field: 'text'
+        }
+      },
+      vocabularyName: {
+        parser: 'equal',
+        target: {
+          type: 'field',
+          field: 'vocabularyName'
+        }
+      }
+    }
+  });
+
   // ser plugin routes
   plugin.setRoutes({
     // Term
@@ -74,87 +99,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       action        : 'findTermTexts',
       model         : 'term',
       responseType  : 'json'
-    },
-    'get /term/:termId([0-9]+)': {
-      name          : 'term.findOne',
-      controller    : 'term',
-      action        : 'findOne',
-      model         : 'term',
-      permission    : 'find_term'
-    },
-    'get /term': {
-      controller    : 'term',
-      action        : 'find',
-      model         : 'term',
-      permission    : 'find_term',
-
-      search: {
-        text:  {
-          parser: 'startsWith',
-          target: {
-            type: 'field',
-            field: 'text'
-          }
-        },
-        vocabularyName: {
-          parser: 'equal',
-          target: {
-            type: 'field',
-            field: 'vocabularyName'
-          }
-        }
-      }
-    },
-    'post /term': {
-      controller    : 'term',
-      action        : 'create',
-      model         : 'term',
-      permission    : 'create_term'
-    },
-    'put /term/:id([0-9]+)': {
-      controller    : 'term',
-      action        : 'edit',
-      model         : 'term',
-      permission    : 'update_term'
-    },
-    'delete /term/:id([0-9]+)': {
-      controller    : 'term',
-      action        : 'delete',
-      model         : 'term',
-      permission    : 'delete_term'
-    },
-
-    // vocabulary
-    'get /vocabulary/:id([0-9]+)': {
-      controller    : 'vocabulary',
-      action        : 'findOne',
-      model         : 'vocabulary',
-      permission    : 'find_vocabulary'
-    },
-
-    'get /vocabulary': {
-      controller    : 'vocabulary',
-      action        : 'find',
-      model         : 'vocabulary',
-      permission    : 'find_vocabulary'
-    },
-    'post /vocabulary': {
-      controller    : 'vocabulary',
-      action        : 'create',
-      model         : 'vocabulary',
-      permission    : 'create_vocabulary'
-    },
-    'put /vocabulary/:id([0-9]+)': {
-      controller    : 'vocabulary',
-      action        : 'edit',
-      model         : 'vocabulary',
-      permission    : 'update_vocabulary'
-    },
-    'delete /vocabulary/:id([0-9]+)': {
-      controller    : 'vocabulary',
-      action        : 'delete',
-      model         : 'vocabulary',
-      permission    : 'delete_vocabulary'
     }
   });
 
@@ -176,27 +120,33 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
 
   plugin.events.on('we:express:set:params', function(data) {
-    // user pre-loader
+    // load vocabulary related to term
     data.express.param('vocabularyId', function (req, res, next, id) {
-      if (!/^\d+$/.exec(String(id))) return res.notFound();
-      data.we.db.models.vocabulary.findById(id)
-      .then(function (v) {
+      data.we.db.models.vocabulary.findOne({
+        where: {
+          // find by id or name
+          $or: { id: id, name: id }
+        }
+      }).then(function (v) {
         if (!v) return res.notFound();
         res.locals.currentVocabulary = v;
         req.params.vocabularyName = v.name;
         next();
-      });
-    })
+      }).catch(next);
+    });
   });
 
   // use before instance to set sequelize virtual fields for term fields
-  plugin.hooks.on('we:models:before:instance', function(we, done) {
+  plugin.hooks.on('we:models:before:instance', function (we, done) {
     var f, cfgs;
     var models = we.db.modelsConfigs;
     for (var modelName in models) {
       if (models[modelName].options && models[modelName].options.termFields) {
 
         for (f in models[modelName].options.termFields) {
+          // set the default vocabularyName
+          if (!models[modelName].options.termFields[f].vocabularyName)
+            models[modelName].options.termFields[f].vocabularyName = 'Tags';
           // set field configs
           cfgs = we.utils._.clone(models[modelName].options.termFields[f]);
           cfgs.type = we.db.Sequelize.VIRTUAL;
@@ -217,7 +167,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   });
 
    // after define all models add term field hooks in models how have terms
-  plugin.hooks.on('we:models:set:joins', function(we, done) {
+  plugin.hooks.on('we:models:set:joins', function (we, done) {
     var models = we.db.models;
     for (var modelName in models) {
       var termFields = we.term.getModelTermFields(we.db.modelsConfigs[modelName]);
@@ -401,7 +351,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           return db.models.modelsterms.findAll({
             where: { modelName: Model.name, modelId: r.id, field: fieldName },
             attributes: ['id'],
-            include: [{ all: true,  attributes: ['id', 'text'] }]
+            include: [{ all: true,  attributes: ['id', 'text', 'vocabularyName'] }]
           }).then(function (modelterms) {
             if (we.utils._.isEmpty(modelterms)) return next();
             // save models terms assoc as cache
@@ -519,7 +469,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       return db.models.modelsterms.findAll({
         where: { modelName: modelName, modelId: record.id, field: fieldName },
         attributes: ['id'],
-        include: [{ all: true,  attributes: ['id', 'text'] }]
+        include: [{ all: true,  attributes: ['id', 'text', 'vocabularyName'] }]
       }).then(function (modelterms) {
         if (we.utils._.isEmpty(modelterms)) return next();
 

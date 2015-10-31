@@ -30,7 +30,13 @@ module.exports = function Model(we) {
         defaultValue: false
       },
       vocabularyName: {
-        type: we.db.Sequelize.STRING
+        type: we.db.Sequelize.STRING,
+        defaultValue: 'Tags',
+        allowNull: false
+      },
+
+      relatedRecord: {
+        type: we.db.Sequelize.VIRTUAL
       }
     },
 
@@ -44,7 +50,18 @@ module.exports = function Model(we) {
 
     options: {
       classMethods: {},
-      instanceMethods: {},
+      instanceMethods: {
+        loadRelatedRecord: function (cb) {
+          var self = this;
+          we.db.models[this.modelName].findOne({
+            where: { id: this.modelId },
+            include: [{ all: true }]
+          }).then(function (r){
+            self.relatedRecord = r;
+            cb();
+          }).catch(cb);
+        }
+      },
       hooks: {}
     }
   }
