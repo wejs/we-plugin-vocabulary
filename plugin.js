@@ -91,12 +91,19 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     }
   });
 
-  // ser plugin routes
+  // set plugin routes
   plugin.setRoutes({
     // Term
     'get /api/v1/term-texts': {
       controller    : 'term',
       action        : 'findTermTexts',
+      model         : 'term',
+      responseType  : 'json'
+    },
+
+    'get /vocabulary/:vocabularyId/tag-clound': {
+      controller    : 'vocabulary',
+      action        : 'getTagUsageCount',
       model         : 'term',
       responseType  : 'json'
     }

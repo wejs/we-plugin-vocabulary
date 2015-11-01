@@ -26,7 +26,23 @@ module.exports = function Model(we) {
     options: {
       titleField: 'name',
       classMethods: {},
-      instanceMethods: {},
+      instanceMethods: {
+        /**
+         * Get tag usage count
+         *
+         * @return {Object} Sequelize query promisse
+         */
+        getTagUsageCount: function getTagUsageCount() {
+          var sql = 'SELECT terms.id, terms.text, COUNT(modelsterms.id) AS count '+
+            ' FROM terms '+
+            ' INNER JOIN modelsterms ON modelsterms.termId=terms.id '+
+            ' WHERE terms.vocabularyName=? AND modelsterms.vocabularyName=? '+
+            ' GROUP BY terms.text ';
+          return we.db.defaultConnection.query(sql, { replacements:
+           [this.name, this.name]
+          });
+        }
+      },
       hooks: {
         afterDestroy: function(r, opts, done) {
           we.utils.async.parallel([
