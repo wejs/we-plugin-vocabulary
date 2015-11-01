@@ -26,7 +26,7 @@ module.exports = function(we) {
 
     if (terms) {
       for (var i = 0; i < terms.length; i++) {
-        html += '<li><a class="term-link" href="/vocabulary/'+vocabularyName+'/'+terms[i]+'">'+terms[i]+'</a></li>';
+        html += '<li><a class="term-link" href="/vocabulary/'+vocabularyName+'/term/'+terms[i]+'">'+terms[i]+'</a></li>';
       }
     }
 
