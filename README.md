@@ -1,18 +1,26 @@
-# We.js Vocabulary plugin
+# We.js Vocabulary, terms and tags plugin
 
-[![Dependency Status](https://david-dm.org/wejs/we-plugin-vocabulary.png)](https://david-dm.org/wejs/we-plugin-vocabulary)
+> Add suport to tags, terms and vocabularies to your we.js project!
 
-> Add suport to tags, terms and vocabularies!
+## Installation
 
-## API:
-TODO
+```sh
+npm install --save we-plugin-vocabulary 
+```
 
 ## Avaible URLS:
-TODO
 
-#### NPM Info:
+### Vocabulary CRUD
+
+
+
+### get /vocabulary/:vocabularyId/tag-clound
+
+Get vocabulary tag clound data with term count usage count
+
+## NPM Info:
 [![NPM](https://nodei.co/npm/we-plugin-vocabulary.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/we-plugin-vocabulary/)
 
 ## Copyright and license
 
-Copyright 2013-2014 Alberto Souza <alberto.souza.dev@gmail.com> and contributors , under [the MIT license](LICENSE).
+[MIT](https://github.com/wejs/we-core/blob/master/LICENSE.md)
