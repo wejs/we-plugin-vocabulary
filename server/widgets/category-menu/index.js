@@ -18,7 +18,9 @@ module.exports = function categoryMenuWidget(projectPath, Widget) {
 
   widget.viewMiddleware = function viewMiddleware(widget, req, res, next) {
     req.we.db.models.term.findAll({
-      vocabularyName: widget.configuration.selectedVocabulary,
+      where: {
+        vocabularyName: widget.configuration.selectedVocabulary
+      },
       limit: '25'
     }).then(function (t){
       widget.terms = t;
