@@ -20,5 +20,9 @@
   "form-term-vocabularyName": "Nome do vocabulário",
   "form-term-vocabularyName": " ",
   "form-term-vocabularyName": "Digite o nome do vocabulário onde esse termo será criado",
-  "term.delete.confirm.msg": "Você tem certeza que deseja deletar esse termo?"
+  "term.delete.confirm.msg": "Você tem certeza que deseja deletar esse termo?",
+  "widget.select.vocabulary": "Selecione uma categoria",
+  "widget.vocabulary.menuId": "Id do menu",
+  "widget.vocabulary.class": "Classe do menu",
+  "widget.category-menu.label": "Menu de categorias ou tags"
 }

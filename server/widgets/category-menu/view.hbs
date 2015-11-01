@@ -1,0 +1,8 @@
+  {{!-- your widget html here... the widget object is avaible as widget variable and res.locals is avaible as locals variable --}}
+<ul class="category-menu {{widget.configuration.class}}">
+  {{#each widget.terms}}
+    <li>
+      {{#link-to 'term.findOne' ../widget.configuration.selectedVocabulary text}} {{text}} {{/link-to}}
+    </li>
+  {{/each}}
+</ul>

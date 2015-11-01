@@ -20,5 +20,9 @@
   "form-term-vocabularyName": "Vocabulary name",
   "form-term-vocabularyName": " ",
   "form-term-vocabularyName": "Vocabulary name where this term are salved",
-  "term.delete.confirm.msg": "Are you sure you want to delete this term?"
+  "term.delete.confirm.msg": "Are you sure you want to delete this term?",
+  "widget.select.vocabulary": "Select one vocabulary",
+  "widget.vocabulary.menuId": "Menu id",
+  "widget.vocabulary.class": "Menu class",
+  "widget.category-menu.label": "Category or tags menu"
 }
