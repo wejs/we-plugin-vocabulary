@@ -25,16 +25,11 @@ module.exports = {
         res.created();
       }).catch(res.queryError);
     } else {
-      if (!req.params.vocabularyId) return res.notFound();
+      if (!res.locals.currentVocabulary) return res.notFound();
 
-      req.we.db.models.vocabulary.findById(req.params.vocabularyId)
-      .then(function (v){
-        if (!v) return res.notFound();
-
-        res.locals.data = req.query;
-        res.locals.data.vocabularyName = v.name;
-        res.ok();
-      }).catch(res.queryError);
+      res.locals.data = req.query;
+      res.locals.data.vocabularyName = res.locals.currentVocabulary.name;
+      res.ok();
     }
   },
   find: function findAll(req, res, next) {
