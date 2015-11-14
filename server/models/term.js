@@ -81,7 +81,22 @@ module.exports = function Model(we) {
           }).catch(cb);
         }
       },
-      hooks: {}
+      hooks: {
+        afterDestroy: function afterDestroy(record, opts, done) {
+          done();
+          if (record && record.id) {
+            // remove model associations in term
+            we.db.models.modelsterms.destroy({
+              where: {
+                $or: [
+                  { termId: record.id },
+                  { termId: null }
+                ]
+              }
+            });
+          }
+        }
+      }
     }
   }
   return model;
