@@ -1,17 +1,14 @@
 <div class="term-record">
   <h2>{{t 'term'}}: {{data.text}} {{we-action-edit-btn resourceName data req data.vocabularyName data.text}}</h2>
 </div>
-
 <hr>
-
 {{#if relatedModels}}
   {{#each relatedModels}}
     {{#if relatedRecord}}
       <div class="term-related-record">
-        {{render-record-teaser modelName='article' record=relatedRecord locals=../../..}}
+        {{render-record-teaser modelName='article' record=relatedRecord locals=..}}
       </div>
     {{/if}}
   {{/each}}
-
   {{paginate count=metadata.relatedModelsCount limit=query.limit currentPage=query.page req=req}}
 {{/if}}
