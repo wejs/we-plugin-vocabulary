@@ -160,7 +160,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           // set virtual setter
           cfgs.set = we.term.getSetTermTag(f, cfgs.onlyLowercase);
           // set form field html
-          cfgs.formFieldType = (cfgs.canCreate? 'vocabulary/tag' : 'vocabulary/category');
+          cfgs.formFieldType =  cfgs.formFieldType || (cfgs.canCreate? 'vocabulary/tag' : 'vocabulary/category');
           // set virtual fields for term fields if now exists
           if (!models[modelName].definition[f]) {
             models[modelName].definition[f] = cfgs;
