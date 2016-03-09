@@ -21,7 +21,7 @@ module.exports = function categoryMenuWidget(projectPath, Widget) {
       where: {
         vocabularyName: widget.configuration.selectedVocabulary
       },
-      limit: '25'
+      limit: 25
     }).then(function (t){
       widget.terms = t;
       next();
