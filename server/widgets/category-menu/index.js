@@ -7,7 +7,7 @@
 module.exports = function categoryMenuWidget(projectPath, Widget) {
   var widget = new Widget('category-menu', __dirname);
 
-  widget.afterSave = function htmlWidgetafterSave(req, res, next) {
+  widget.beforeSave = function htmlWidgetBeforeSave(req, res, next) {
     req.body.configuration = {
       selectedVocabulary: req.body.selectedVocabulary,
       class: req.body.class
