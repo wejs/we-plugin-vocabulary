@@ -66,33 +66,73 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     templateFolderPrefix: 'admin/'
   });
 
-
-  // Vocabulary resrouces
-  plugin.setResource({ name: 'vocabulary' });
-  // terms admin resource
-  plugin.setResource({
-    parent: 'vocabulary',
-    name: 'term',
-    search: {
-      text:  {
-        parser: 'startsWith',
-        target: {
-          type: 'field',
-          field: 'text'
-        }
-      },
-      vocabularyName: {
-        parser: 'equal',
-        target: {
-          type: 'field',
-          field: 'vocabularyName'
-        }
-      }
-    }
-  });
-
   // set plugin routes
   plugin.setRoutes({
+    'get /vocabulary': {
+      resourceName: 'vocabulary',
+      name: 'vocabulary.find',
+      action: 'find',
+      controller: 'vocabulary',
+      model: 'vocabulary',
+      template: 'vocabulary/find',
+      permission: 'find_vocabulary',
+      titleHandler: 'i18n',
+      titleI18n: 'vocabulary.find',
+      breadcrumbHandler: 'find'
+    },
+    'get /vocabulary/:vocabularyId': {
+      resourceName: 'vocabulary',
+      name: 'vocabulary.findOne',
+      action: 'findOne',
+      controller: 'vocabulary',
+      model: 'vocabulary',
+      template: 'vocabulary/findOne',
+      permission: 'find_vocabulary',
+      titleHandler: 'recordField',
+      titleField: 'name',
+      breadcrumbHandler: 'findOne'
+    },
+    'get /vocabulary/:vocabularyId/term': {
+      resourceName: 'term',
+      name: 'term.find',
+      action: 'find',
+      controller: 'term',
+      model: 'term',
+      template: 'term/find',
+      permission: 'find_term',
+      titleHandler: 'i18n',
+      titleI18n: 'term.find',
+      // default search
+      search: {
+        text:  {
+          parser: 'startsWith',
+          target: {
+            type: 'field',
+            field: 'text'
+          }
+        },
+        vocabularyName: {
+          parser: 'equal',
+          target: {
+            type: 'field',
+            field: 'vocabularyName'
+          }
+        }
+      },
+      breadcrumbHandler: 'find'
+    },
+    'get /vocabulary/:vocabularyId/term/:termId': {
+      resourceName: 'term',
+      name: 'term.findOne',
+      action: 'findOne',
+      controller: 'term',
+      model: 'term',
+      template: 'term/findOne',
+      permission: 'find_term',
+      titleHandler: 'recordField',
+      titleField: 'text',
+      breadcrumbHandler: 'findOne'
+    },
     // Term
     'get /api/v1/term-texts': {
       controller    : 'term',
