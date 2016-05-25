@@ -1,4 +1,6 @@
 {
 	"page.find": "page.find",
-	"user": "user"
+	"user": "user",
+	"response.notFound.title": "response.notFound.title",
+	"ER_BAD_FIELD_ERROR: Unknown column 'creator.roles' in 'field list'": "ER_BAD_FIELD_ERROR: Unknown column 'creator.roles' in 'field list'"
 }

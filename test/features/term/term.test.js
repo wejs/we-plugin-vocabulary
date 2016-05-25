@@ -29,17 +29,20 @@ describe('termFeature', function () {
           .then(function (p) {
             salvedPage = p;
             return done();
-          });
+          }).catch(done);
         });
       },
       function createVocabulary(done) {
         var vocabularyStub = stubs.vocabularyStub(salvedUser.id);
         vocabularyStub.name = 'Category';
-        we.db.models.vocabulary.create(vocabularyStub)
-        .then(function (v) {
+        we.db.models.vocabulary.findOrCreate({
+          where: { name: 'Category' },
+          defaults: vocabularyStub
+        })
+        .spread(function (v) {
           salvedVocabulary = v;
           done();
-        });
+        }).catch(done);
       },
       function createTerms(done) {
         var termsStub = stubs.termsStub(
@@ -47,13 +50,13 @@ describe('termFeature', function () {
         );
         we.db.models.term.bulkCreate(termsStub)
         .then(function(){
-          we.db.models.term.findAll()
+          return we.db.models.term.findAll()
           .then(function(ts) {
 
             savedTerms = ts;
             done();
           })
-        });
+        }).catch(done);
       }
     ], done);
   });
@@ -79,50 +82,6 @@ describe('termFeature', function () {
           }
         });
         assert(hasPageTags, 'Dont has page tags!');
-
-        done();
-      });
-    });
-
-    it('get /term?where should find terms with where param', function(done){
-      var where = 'where=' + querystring.escape( JSON.stringify({
-        text: { like: '%Saúde%' }
-      }));
-
-      request(http)
-      .get('/term?' + where)
-      .set('Accept', 'application/json')
-      .end(function (err, res) {
-        assert.equal(200, res.status);
-        assert(res.body.term);
-        assert( _.isArray(res.body.term) , 'term not is array');
-        assert(res.body.meta);
-
-        assert(res.body.meta.count);
-
-        done();
-      });
-    });
-
-    it('get /term?where should find terms without field and isNull where', function(done){
-      var where = 'where=' + querystring.escape( JSON.stringify({
-        vocabularyName: null
-      }));
-
-      request(http)
-      .get('/term?' + where)
-      .set('Accept', 'application/json')
-      .end(function (err, res) {
-        assert.equal(200, res.status);
-        assert(res.body.term);
-        assert( _.isArray(res.body.term) , 'term not is array');
-        assert(res.body.meta);
-
-        assert(res.body.meta.count);
-
-        res.body.term.forEach(function(term) {
-          assert.equal(term.vocabulary, null);
-        });
 
         done();
       });
@@ -155,7 +114,10 @@ describe('termFeature', function () {
       .set('Accept', 'application/json')
       .expect(200)
       .end(function (err, res) {
-        if (err) return done(err);
+        if (err) {
+          console.error(res.text);
+          return done(err);
+        }
 
         assert(res.body.vocabulary);
         assert( _.isArray(res.body.vocabulary) , 'vocabulary not is array');
@@ -241,8 +203,11 @@ describe('termFeature', function () {
       .expect(200)
       .set('Accept', 'application/json')
       .end(function (err, res) {
-        console.log(err, res.text)
-        if (err) return done(err);
+        if (err) {
+          console.log(res.text);
+          return done(err);
+        }
+
         assert.equal(200, res.status);
         assert(res.body.page);
         assert(res.body.page.title, newTitle);

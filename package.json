@@ -1,33 +1,30 @@
 {
   "name": "we-plugin-vocabulary",
   "description": "We.js we-plugin-vocabulary plugin",
-  "version": "0.3.23",
-  "main": "lib/index.js",
+  "version": "01.0.0",
+  "main": "plugin.js",
   "scripts": {
-    "lint": "./node_modules/.bin/jshint .",
     "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js",
-    "prepublish": "npm prune"
+    "coverage": "NODE_ENV=test LOG_LV=info node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -u exports -R spec test/bootstrap.js test/**/*.test.js"
   },
   "devDependencies": {
-    "fs-extra": "^0.26.0",
-    "istanbul": "^0.4.0",
-    "jshint": "^2.8.0",
-    "mocha": "^2.3.3",
-    "rimraf": "^2.4.3",
-    "supertest": "^1.1.0",
-    "we-core": "0.3.99",
-    "we-plugin-file": "^0.3.15",
+    "express-mysql-session": "^1.0.0",
+    "fs-extra": "^0.30.0",
+    "istanbul": "^0.4.3",
+    "mocha": "^2.5.2",
+    "mysql": "^2.10.2",
+    "rimraf": "^2.5.2",
+    "supertest": "^1.2.0",
+    "we-core": "1.4.0",
+    "we-plugin-acl": "^1.0.0",
+    "we-plugin-auth": "^1.0.0",
+    "we-plugin-file": "^1.0.6",
     "we-plugin-page": "^0.3.2",
-    "we-test-tools": "0.3.9",
-    "we-theme-admin-default": "^0.3.10",
-    "we-theme-site-wejs": "^0.3.30"
+    "we-plugin-user": "^1.0.0",
+    "we-test-tools": "0.3.17",
+    "we-theme-admin-default": "^1.0.1",
+    "we-theme-site-wejs": "^0.3.31"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:wejs/we-plugin-form.git"
-  },
-  "publishConfig": {
-    "registry": "http://registry.npmjs.org"
-  },
+  "repository": "wejs/we-plugin-form",
   "license": "MIT"
 }
