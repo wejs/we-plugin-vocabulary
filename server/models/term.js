@@ -36,12 +36,21 @@ module.exports = function Model(we) {
         contextLoader: function contextLoader(req, res, done) {
           if (!res.locals.id || !res.locals.loadCurrentRecord) return done();
 
-          return this.findOne({
-            where: {
+          var where = {};
+          // need to check if is id to skip postgreql error if search for texts in number
+          if (Number(res.local.id) ) {
+            where = {
               $or: { id: res.locals.id, text: res.locals.id }
-            },
+            }
+          } else {
+            where = { text: res.locals.id }
+          }
+
+          return this.findOne({
+            where: where,
             include: [{ all: true }]
-          }).then(function (record) {
+          })
+          .then(function afterFindTerm (record) {
             res.locals.data = record;
             if (record && record.dataValues.creatorId && req.isAuthenticated()) {
               // ser role owner
@@ -52,6 +61,7 @@ module.exports = function Model(we) {
 
             return done();
           })
+          .catch(done)
         }
       },
       instanceMethods: {

@@ -5,3 +5,6 @@ test
 .travis.yml
 .gitignore
 *.log
+files/uploads
+config
+coverage

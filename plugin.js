@@ -169,17 +169,27 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   plugin.events.on('we:express:set:params', function(data) {
     // load vocabulary related to term
     data.express.param('vocabularyId', function (req, res, next, id) {
-      data.we.db.models.vocabulary.findOne({
-        where: {
-          // find by id or name
+
+      var where = {};
+      // need to check if is id to skip postgreql error if search for texts in number
+      if (Number(id) ) {
+        where = {
           $or: { id: id, name: id }
         }
-      }).then(function (v) {
+      } else {
+        where = { name: id }
+      }
+
+      data.we.db.models.vocabulary.findOne({
+        where: where
+      })
+      .then(function afterLoadVocabulary(v) {
         if (!v) return res.notFound();
         res.locals.currentVocabulary = v;
         req.params.vocabularyName = v.name;
         next();
-      }).catch(next);
+      })
+      .catch(next);
     });
   });
 
