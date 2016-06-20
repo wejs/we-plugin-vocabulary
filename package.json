@@ -1,7 +1,7 @@
 {
   "name": "we-plugin-vocabulary",
-  "description": "We.js we-plugin-vocabulary plugin",
-  "version": "1.0.1",
+  "description": "We.js vocabulary plugin",
+  "version": "1.1.0",
   "main": "plugin.js",
   "scripts": {
     "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js",
@@ -25,6 +25,15 @@
     "we-theme-admin-default": "^1.0.1",
     "we-theme-site-wejs": "^0.3.31"
   },
-  "repository": "wejs/we-plugin-form",
-  "license": "MIT"
+  "repository": "wejs/we-plugin-vocabulary",
+  "license": "MIT",
+  "author": "Alberto Souza <contato@albertosouza.net>",
+  "keywords": [
+    "wejs-plugin"
+  ],
+  "wejs": {
+    "dependencies": {
+      "we-plugin-user": true
+    }
+  }
 }
