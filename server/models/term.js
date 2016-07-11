@@ -38,7 +38,7 @@ module.exports = function Model(we) {
 
           var where = {};
           // need to check if is id to skip postgreql error if search for texts in number
-          if (Number(res.local.id) ) {
+          if (Number(res.locals.id) ) {
             where = {
               $or: { id: res.locals.id, text: res.locals.id }
             }
