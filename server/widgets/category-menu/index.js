@@ -22,19 +22,27 @@ module.exports = function categoryMenuWidget(projectPath, Widget) {
         vocabularyName: widget.configuration.selectedVocabulary
       },
       limit: 25
-    }).then(function (t){
+    })
+    .then(function (t) {
       widget.terms = t;
       next();
-    }).catch(next);
+
+      return null;
+    })
+    .catch(next);
   }
 
   widget.formMiddleware = function formMiddleware(req, res, next) {
     req.we.db.models.vocabulary.findAll({
       attributes: ['id', 'name']
-    }).then(function(vocabularies){
+    })
+    .then(function (vocabularies) {
       res.locals.vocabularies = vocabularies;
       next();
-    }).catch(next);
+
+      return null;
+    })
+    .catch(next);
   }
 
   return widget;

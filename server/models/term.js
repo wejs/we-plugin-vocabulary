@@ -33,7 +33,7 @@ module.exports = function Model(we) {
          * @param  {Object}   res  express.js response
          * @param  {Function} done callback
          */
-        contextLoader: function contextLoader(req, res, done) {
+        contextLoader: function contextLoader (req, res, done) {
           if (!res.locals.id || !res.locals.loadCurrentRecord) return done();
 
           var where = {};
@@ -50,7 +50,9 @@ module.exports = function Model(we) {
             where: where,
             include: [{ all: true }]
           })
-          .then(function afterFindTerm (record) {
+          .nodeify(function afterFindTerm (err, record) {
+            if (err) return done(err);
+
             res.locals.data = record;
             if (record && record.dataValues.creatorId && req.isAuthenticated()) {
               // ser role owner
@@ -59,9 +61,8 @@ module.exports = function Model(we) {
               }
             }
 
-            return done();
+            done();
           })
-          .catch(done)
         }
       },
       instanceMethods: {
@@ -76,23 +77,28 @@ module.exports = function Model(we) {
           );
         },
 
-        loadRelatedRecords: function loadRelatedRecords(opts, cb) {
-          we.db.models.modelsterms.findAndCountAll({
+        loadRelatedRecords: function loadRelatedRecords (opts, cb) {
+          return we.db.models.modelsterms.findAndCountAll({
             where: { termId: this.id },
             order: [['modelId', 'DESC']],
             limit: opts.limit,
             offset: opts.offset
-          }).then(function (r){
+          })
+          .then(function afterLoadRelatedRecords (r) {
+
             we.utils.async.each(r.rows, function (modelsterms, next){
               modelsterms.loadRelatedRecord(next)
-            }, function (err){
+            }, function (err) {
               cb(err, r);
             });
-          }).catch(cb);
+
+            return r
+          })
+          .catch(cb);
         }
       },
       hooks: {
-        afterDestroy: function afterDestroy(record, opts, done) {
+        afterDestroy: function afterDestroy (record, opts, done) {
           done();
           if (record && record.id) {
             // remove model associations in term

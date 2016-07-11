@@ -165,39 +165,42 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     done();
   });
 
+  plugin.paramVocabularyIdMD = function paramVocabularyIdMD (req, res, next, id) {
+    var where = {};
+    // need to check if is id to skip postgreql error if search for texts in number
+    if (Number(id) ) {
+      where = {
+        $or: { id: id, name: id }
+      }
+    } else {
+      where = { name: id }
+    }
+
+    plugin.we.db.models.vocabulary.findOne({
+      where: where
+    })
+    .then(function afterLoadVocabulary(v) {
+      if (!v) return res.notFound()
+      res.locals.currentVocabulary = v
+      req.params.vocabularyName = v.name
+      next()
+
+      return null
+    })
+    .catch(next)
+  };
 
   plugin.events.on('we:express:set:params', function(data) {
     // load vocabulary related to term
-    data.express.param('vocabularyId', function (req, res, next, id) {
-
-      var where = {};
-      // need to check if is id to skip postgreql error if search for texts in number
-      if (Number(id) ) {
-        where = {
-          $or: { id: id, name: id }
-        }
-      } else {
-        where = { name: id }
-      }
-
-      data.we.db.models.vocabulary.findOne({
-        where: where
-      })
-      .then(function afterLoadVocabulary(v) {
-        if (!v) return res.notFound();
-        res.locals.currentVocabulary = v;
-        req.params.vocabularyName = v.name;
-        next();
-      })
-      .catch(next);
-    });
-  });
+    data.express.param('vocabularyId', plugin.paramVocabularyIdMD);
+  })
 
   // use before instance to set sequelize virtual fields for term fields
   plugin.hooks.on('we:models:before:instance', function (we, done) {
     var f, cfgs;
     var models = we.db.modelsConfigs;
     for (var modelName in models) {
+
       if (models[modelName].options && models[modelName].options.termFields) {
 
         for (f in models[modelName].options.termFields) {
@@ -219,6 +222,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           }
         }
       }
+
     }
     done();
   });
@@ -306,14 +310,14 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             log.verbose(
               'term.on:createdResponse: Cant create the term assoc:', term, fieldName, fieldConfig.vocabularyName
             );
-            return nextTerm();
+            return nextTerm()
           }
 
           var termObj;
           if (we.utils._.isArray(result)) {
-            termObj = result[0];
+            termObj = result[0]
           } else {
-            termObj = result;
+            termObj = result
           }
 
           return db.models.modelsterms.create({
@@ -323,12 +327,16 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             isTag: fieldConfig.canCreate,
             termId: termObj.id,
             vocabularyName: fieldConfig.vocabularyName
-          }).then(function () {
-            salvedTerms.push(termObj.text);
-            return nextTerm();
-          });
+          })
+          .then(function () {
+            salvedTerms.push(termObj.text)
+            nextTerm()
+
+            return null
+          })
+          .catch(nextTerm)
         });
-      }, function(err) {
+      }, function (err) {
         if (err) return done(err);
         return done(null, salvedTerms);
       });
@@ -358,13 +366,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     }
 
     term.afterCreatedRecord = function afterCreatedRecord(r, opts, done) {
-      var functions = [];
-      var Model = this;
+      var functions = []
+      var Model = this
 
-      var termFields = term.getModelTermFields(this);
+      var termFields = term.getModelTermFields(this)
       if (!termFields) return done();
 
-      var fieldNames = Object.keys(termFields);
+      var fieldNames = Object.keys(termFields)
 
       fieldNames.forEach(function (fieldName) {
         if (we.utils._.isEmpty(r.get(fieldName))) return;
@@ -377,12 +385,12 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             fieldName,
             termFields[fieldName],
           function afterSaveModelTerms(err, terms) {
-            if(err) return next(err);
-            r.set(fieldName, terms);
-            return next();
-          });
-        });
-      });
+            if(err) return next(err)
+            r.set(fieldName, terms)
+            return next()
+          })
+        })
+      })
       we.utils.async.series(functions, done);
     }
     /**
@@ -409,23 +417,27 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             where: { modelName: Model.name, modelId: r.id, field: fieldName },
             attributes: ['id'],
             include: [{ all: true,  attributes: ['id', 'text', 'vocabularyName'] }]
-          }).then(function (modelterms) {
-            if (we.utils._.isEmpty(modelterms)) return next();
+          })
+          .then(function (modelterms) {
+            if (we.utils._.isEmpty(modelterms)) return next()
             // save models terms assoc as cache
-            r._salvedModelTerms[fieldName] = modelterms;
+            r._salvedModelTerms[fieldName] = modelterms
 
             var terms = modelterms.map(function (modelterm) {
               return modelterm.get().term.get().text;
-            });
-            r.set(fieldName, terms);
+            })
+            r.set(fieldName, terms)
             // salved terms cache
-            r._salvedTerms[fieldName] = terms;
-            return next();
-          }).catch(next);
+            r._salvedTerms[fieldName] = terms
+            next()
+
+            return null
+          })
+          .catch(next);
         });
       });
 
-      we.utils.async.series(functions, done);
+      we.utils.async.series(functions, done)
     }
 
     term.afterDeleteRecord = function deletedResponse(r, opts, done) {
@@ -436,10 +448,14 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           modelName: Model.name,
           modelId: r.id
         }
-      }).then(function (result) {
-        log.debug('Deleted ' + result + ' terms from record with id: ' + r.id);
-        return done();
-      }).catch(done);
+      })
+      .then(function (result) {
+        log.debug('Deleted ' + result + ' terms from record with id: ' + r.id)
+        done()
+
+        return null
+      })
+      .catch(done);
     };
 
     term.afterUpdatedRecord = function updatedResponse(r, opts, done) {
@@ -527,7 +543,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         where: { modelName: modelName, modelId: record.id, field: fieldName },
         attributes: ['id'],
         include: [{ all: true,  attributes: ['id', 'text', 'vocabularyName'] }]
-      }).then(function (modelterms) {
+      })
+      .then(function (modelterms) {
         if (we.utils._.isEmpty(modelterms)) return next();
 
         var terms = modelterms.map(function (modelterm) {
@@ -535,8 +552,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         });
 
         record[fieldName] = terms;
-        return next();
-      }).catch(next);
+        next();
+
+        return null;
+      })
+      .catch(next);
     }
 
     we.term = term;

@@ -51,15 +51,21 @@ module.exports = function Model(we) {
     options: {
       classMethods: {},
       instanceMethods: {
-        loadRelatedRecord: function (cb) {
+        loadRelatedRecord: function loadRelatedRecord(cb) {
           var self = this;
           we.db.models[this.modelName].findOne({
             where: { id: this.modelId },
             include: [{ all: true }]
-          }).then(function (r){
+          })
+          .then(function afterLoadRelatedRecord(r) {
+
             self.relatedRecord = r;
             cb();
-          }).catch(cb);
+
+            return r;
+
+          })
+          .catch(cb);
         }
       },
       hooks: {}
