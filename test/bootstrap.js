@@ -31,21 +31,5 @@ before(function(callback) {
 
 //after all tests
 after(function (callback) {
-  testTools.helpers.resetDatabase(we, function(err) {
-    if(err) return callback(err);
-
-    we.db.defaultConnection.close();
-
-    var tempFolders = [
-      projectPath + '/files/sqlite',
-      projectPath + '/config/local.js',
-    ];
-
-    we.utils.async.each(tempFolders, function(folder, next){
-      deleteDir( folder, next);
-    }, function(err) {
-      if (err) throw new Error(err);
-      callback();
-    })
-  })
+  we.exit(callback);
 });

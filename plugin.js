@@ -4,7 +4,7 @@
  * see http://wejs.org/docs/we/extend.plugin
  */
 module.exports = function loadPlugin(projectPath, Plugin) {
-  var plugin = new Plugin(__dirname);
+  const plugin = new Plugin(__dirname);
   // set plugin configs
   plugin.setConfigs({
     permissions: {
@@ -51,88 +51,99 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     }
   });
 
-  // admin vocabulary resource
+  // // admin vocabulary resource
+  // plugin.setResource({
+  //   namePrefix: 'admin.',
+  //   name: 'vocabulary',
+  //   namespace: '/admin',
+  //   templateFolderPrefix: 'admin/'
+  // });
+  // // terms admin resource
+  // plugin.setResource({
+  //   namePrefix: 'admin.',
+  //   parent: 'admin.vocabulary',
+  //   name: 'term',
+  //   templateFolderPrefix: 'admin/'
+  // });
+
   plugin.setResource({
-    namePrefix: 'admin.',
     name: 'vocabulary',
-    namespace: '/admin',
-    templateFolderPrefix: 'admin/'
+    routeId: ':vocabularyId'
   });
-  // terms admin resource
   plugin.setResource({
-    namePrefix: 'admin.',
-    parent: 'admin.vocabulary',
     name: 'term',
-    templateFolderPrefix: 'admin/'
+    routeId: ':termId'
   });
 
   // set plugin routes
   plugin.setRoutes({
-    'get /vocabulary': {
-      resourceName: 'vocabulary',
-      name: 'vocabulary.find',
-      action: 'find',
-      controller: 'vocabulary',
-      model: 'vocabulary',
-      template: 'vocabulary/find',
-      permission: 'find_vocabulary',
-      titleHandler: 'i18n',
-      titleI18n: 'vocabulary.find',
-      breadcrumbHandler: 'find'
-    },
-    'get /vocabulary/:vocabularyId': {
-      resourceName: 'vocabulary',
-      name: 'vocabulary.findOne',
-      action: 'findOne',
-      controller: 'vocabulary',
-      model: 'vocabulary',
-      template: 'vocabulary/findOne',
-      permission: 'find_vocabulary',
-      titleHandler: 'recordField',
-      titleField: 'name',
-      breadcrumbHandler: 'findOne'
-    },
-    'get /vocabulary/:vocabularyId/term': {
-      resourceName: 'term',
-      name: 'term.find',
-      action: 'find',
-      controller: 'term',
-      model: 'term',
-      template: 'term/find',
-      permission: 'find_term',
-      titleHandler: 'i18n',
-      titleI18n: 'term.find',
-      // default search
-      search: {
-        text:  {
-          parser: 'startsWith',
-          target: {
-            type: 'field',
-            field: 'text'
-          }
-        },
-        vocabularyName: {
-          parser: 'equal',
-          target: {
-            type: 'field',
-            field: 'vocabularyName'
-          }
-        }
-      },
-      breadcrumbHandler: 'find'
-    },
-    'get /vocabulary/:vocabularyId/term/:termId': {
-      resourceName: 'term',
-      name: 'term.findOne',
-      action: 'findOne',
-      controller: 'term',
-      model: 'term',
-      template: 'term/findOne',
-      permission: 'find_term',
-      titleHandler: 'recordField',
-      titleField: 'text',
-      breadcrumbHandler: 'findOne'
-    },
+    // 'get /vocabulary': {
+    //   resourceName: 'vocabulary',
+    //   name: 'vocabulary.find',
+    //   action: 'find',
+    //   controller: 'vocabulary',
+    //   model: 'vocabulary',
+    //   template: 'vocabulary/find',
+    //   permission: 'find_vocabulary',
+    //   titleHandler: 'i18n',
+    //   titleI18n: 'vocabulary.find',
+    //   breadcrumbHandler: 'find'
+    // },
+    // 'get /vocabulary/:vocabularyId': {
+    //   paramIgit dName: 'vocabularyId',
+    //   resourceName: 'vocabulary',
+    //   name: 'vocabulary.findOne',
+    //   action: 'findOne',
+    //   controller: 'vocabulary',
+    //   model: 'vocabulary',
+    //   template: 'vocabulary/findOne',
+    //   permission: 'find_vocabulary',
+    //   titleHandler: 'recordField',
+    //   titleField: 'name',
+    //   breadcrumbHandler: 'findOne'
+    // },
+    // 'get /vocabulary/:vocabularyId/term': {
+    //   resourceName: 'term',
+    //   name: 'term.find',
+    //   action: 'find',
+    //   controller: 'term',
+    //   model: 'term',
+    //   template: 'term/find',
+    //   permission: 'find_term',
+    //   titleHandler: 'i18n',
+    //   titleI18n: 'term.find',
+    //   // default search
+    //   search: {
+    //     text:  {
+    //       parser: 'startsWith',
+    //       target: {
+    //         type: 'field',
+    //         field: 'text'
+    //       }
+    //     },
+    //     vocabularyName: {
+    //       parser: 'equal',
+    //       target: {
+    //         type: 'field',
+    //         field: 'vocabularyName'
+    //       }
+    //     }
+    //   },
+    //   breadcrumbHandler: 'find'
+    // },
+    // 'get /vocabulary/:vocabularyId/term/:termId': {
+    //   paramIdName: 'termId',
+    //   resourceName: 'term',
+    //   name: 'term.findOne',
+    //   action: 'findOne',
+    //   controller: 'term',
+    //   model: 'term',
+    //   template: 'term/findOne',
+    //   permission: 'find_term',
+    //   titleHandler: 'recordField',
+    //   titleField: 'text',
+    //   breadcrumbHandler: 'findOne'
+    // },
     // Term
     'get /api/v1/term-texts': {
       controller    : 'term',
@@ -150,7 +161,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   });
 
   plugin.hooks.on('we-plugin-menu:after:set:core:menus', function (data, done) {
-    var we = data.req.we;
+    const we = data.req.we;
     // set admin menu
     if (data.res.locals.isAdmin) {
       data.res.locals.adminMenu.addLink({
@@ -166,39 +177,39 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   });
 
   plugin.paramVocabularyIdMD = function paramVocabularyIdMD (req, res, next, id) {
-    var where = {};
+    let where = {};
     // need to check if is id to skip postgreql error if search for texts in number
     if (Number(id) ) {
       where = {
         $or: { id: id, name: id }
-      }
+      };
     } else {
-      where = { name: id }
+      where = { name: id };
     }
 
     plugin.we.db.models.vocabulary.findOne({
       where: where
     })
     .then(function afterLoadVocabulary(v) {
-      if (!v) return res.notFound()
-      res.locals.currentVocabulary = v
-      req.params.vocabularyName = v.name
-      next()
+      if (!v) return res.notFound();
+      res.locals.currentVocabulary = v;
+      req.params.vocabularyName = v.name;
+      next();
 
-      return null
+      return null;
     })
-    .catch(next)
+    .catch(next);
   };
 
   plugin.events.on('we:express:set:params', function(data) {
     // load vocabulary related to term
     data.express.param('vocabularyId', plugin.paramVocabularyIdMD);
-  })
+  });
 
   // use before instance to set sequelize virtual fields for term fields
   plugin.hooks.on('we:models:before:instance', function (we, done) {
-    var f, cfgs;
-    var models = we.db.modelsConfigs;
+    let f, cfgs;
+    const models = we.db.modelsConfigs;
     for (var modelName in models) {
 
       if (models[modelName].options && models[modelName].options.termFields) {
@@ -229,15 +240,16 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
    // after define all models add term field hooks in models how have terms
   plugin.hooks.on('we:models:set:joins', function (we, done) {
-    var models = we.db.models;
-    for (var modelName in models) {
-      var termFields = we.term.getModelTermFields(we.db.modelsConfigs[modelName]);
+    const models = we.db.models;
+
+    for (let modelName in models) {
+      const termFields = we.term.getModelTermFields(we.db.modelsConfigs[modelName]);
 
       if ( we.utils._.isEmpty(termFields) ) continue;
 
       models[modelName]
       .addHook('afterFind', 'loadTerms', function afterFind(r, opts, done) {
-        var Model = this;
+        const Model = this;
         if ( we.utils._.isArray(r) ) {
           we.utils.async.eachSeries(r, function (r1, next) {
             we.term.afterFindRecord.bind(Model)(r1, opts, next);
@@ -245,7 +257,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         } else {
           we.term.afterFindRecord.bind(Model)(r, opts, done) ;
         }
-      })
+      });
 
       models[modelName].addHook('afterCreate', 'createTerms', we.term.afterCreatedRecord);
       models[modelName].addHook('afterUpdate', 'updateTerms', we.term.afterUpdatedRecord);
@@ -257,15 +269,14 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
 
   plugin.events.on('we:after:load:plugins', function (we) {
-    var db = we.db;
-    var log = we.log;
-
-    var term = {};
+    const db = we.db,
+      log = we.log,
+      term = {};
 
     term.getModelTermFields = function(Model) {
       if (!Model || !Model.options || !Model.options.termFields) return null;
       return Model.options.termFields;
-    }
+    };
 
     term.saveModelTerms = function saveModelTerms(modelName, modelId, req, fieldName, isTags, cb) {
       return db.models.modelsterms.create({
@@ -276,12 +287,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       }).then(function(terms) {
         return cb(null, terms);
       });
-    }
+    };
+
     term.createModelTerms = function createModelTerms(terms, modelName, modelId, fieldName, fieldConfig, done) {
-      var salvedTerms = [];
+      const salvedTerms = [];
 
       we.utils.async.eachSeries(terms, function (term, nextTerm){
-        var query;
+        let query;
 
         if (fieldConfig.onlyLowercase) term = term.toLowerCase();
 
@@ -310,14 +322,14 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             log.verbose(
               'term.on:createdResponse: Cant create the term assoc:', term, fieldName, fieldConfig.vocabularyName
             );
-            return nextTerm()
+            return nextTerm();
           }
 
-          var termObj;
+          let termObj;
           if (we.utils._.isArray(result)) {
-            termObj = result[0]
+            termObj = result[0];
           } else {
-            termObj = result
+            termObj = result;
           }
 
           return db.models.modelsterms.create({
@@ -329,18 +341,18 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             vocabularyName: fieldConfig.vocabularyName
           })
           .then(function () {
-            salvedTerms.push(termObj.text)
-            nextTerm()
+            salvedTerms.push(termObj.text);
+            nextTerm();
 
-            return null
+            return null;
           })
-          .catch(nextTerm)
+          .catch(nextTerm);
         });
       }, function (err) {
         if (err) return done(err);
         return done(null, salvedTerms);
       });
-    }
+    };
 
     // virtual fields
     term.getSetTermTag = function getSetTermTag(fieldName, onlyLowercase) {
@@ -353,7 +365,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
               return v.toLowerCase();
             }));
           }
-        }
+        };
       } else {
         return function setTermTag(val) {
           if (typeof val === 'string') {
@@ -361,18 +373,18 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           } else {
             this.setDataValue(fieldName, val);
           }
-        }
+        };
       }
-    }
+    };
 
     term.afterCreatedRecord = function afterCreatedRecord(r, opts, done) {
-      var functions = []
-      var Model = this
+      const functions = [],
+        Model = this;
 
-      var termFields = term.getModelTermFields(this)
+      let termFields = term.getModelTermFields(this);
       if (!termFields) return done();
 
-      var fieldNames = Object.keys(termFields)
+      let fieldNames = Object.keys(termFields);
 
       fieldNames.forEach(function (fieldName) {
         if (we.utils._.isEmpty(r.get(fieldName))) return;
@@ -385,31 +397,32 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             fieldName,
             termFields[fieldName],
           function afterSaveModelTerms(err, terms) {
-            if(err) return next(err)
-            r.set(fieldName, terms)
-            return next()
-          })
-        })
-      })
+            if(err) return next(err);
+            r.set(fieldName, terms);
+            return next();
+          });
+        });
+      });
       we.utils.async.series(functions, done);
-    }
+    };
+
     /**
      * Load record terms after find record
      */
     term.afterFindRecord = function afterFindRecord(r, opts, done) {
 
-      var functions = [];
-      var Model = this;
+      const functions = [],
+        Model = this;
       // found 0 results
       if (!r) return done();
 
-      var termFields = term.getModelTermFields(this);
+      const termFields = term.getModelTermFields(this);
       if (!termFields) return done();
 
       if (!r._salvedModelTerms) r._salvedModelTerms = {};
       if (!r._salvedTerms) r._salvedTerms = {};
 
-      var fieldNames = Object.keys(termFields);
+      let fieldNames = Object.keys(termFields);
       // for each field
       fieldNames.forEach(function (fieldName) {
         functions.push(function (next) {
@@ -419,29 +432,29 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             include: [{ all: true,  attributes: ['id', 'text', 'vocabularyName'] }]
           })
           .then(function (modelterms) {
-            if (we.utils._.isEmpty(modelterms)) return next()
+            if (we.utils._.isEmpty(modelterms)) return next();
             // save models terms assoc as cache
-            r._salvedModelTerms[fieldName] = modelterms
+            r._salvedModelTerms[fieldName] = modelterms;
 
-            var terms = modelterms.map(function (modelterm) {
+            const terms = modelterms.map( (modelterm)=> {
               return modelterm.get().term.get().text;
-            })
-            r.set(fieldName, terms)
+            });
+            r.set(fieldName, terms);
             // salved terms cache
-            r._salvedTerms[fieldName] = terms
-            next()
+            r._salvedTerms[fieldName] = terms;
+            next();
 
-            return null
+            return null;
           })
           .catch(next);
         });
       });
 
-      we.utils.async.series(functions, done)
-    }
+      we.utils.async.series(functions, done);
+    };
 
     term.afterDeleteRecord = function deletedResponse(r, opts, done) {
-      var Model = this;
+      const Model = this;
 
       db.models.modelsterms.destroy({
         where: {
@@ -450,68 +463,47 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         }
       })
       .then(function (result) {
-        log.debug('Deleted ' + result + ' terms from record with id: ' + r.id)
-        done()
+        log.debug('Deleted ' + result + ' terms from record with id: ' + r.id);
+        done();
 
-        return null
+        return null;
       })
       .catch(done);
     };
 
     term.afterUpdatedRecord = function updatedResponse(r, opts, done) {
-      var Model = this;
+      const Model = this;
 
-      var termFields = term.getModelTermFields(this);
+      let termFields = term.getModelTermFields(this);
       if (!termFields) return done();
 
-      var fieldNames = Object.keys(termFields);
+      let fieldNames = Object.keys(termFields);
       we.utils.async.eachSeries(fieldNames, function (fieldName, nextField) {
         // check if user whant update this field
         if (opts.fields.indexOf(fieldName) === -1) return nextField();
 
-        var salvedmodelterms = (r._salvedModelTerms[fieldName] || []);
-        var salvedTerms = (r._salvedTerms[fieldName] || []);
-        var termsToDelete = [];
-        var termsToSave = we.utils._.clone( r.get(fieldName) );
+        const fieldConfig = termFields[fieldName];
+
+        let salvedTerms = (r._salvedTerms[fieldName] || []);
+        let termsToSave = we.utils._.clone( r.get(fieldName) );
 
         we.utils.async.series([
-          // check if one of the new terms is salved
-          function checkIfNeedsToSaveOrDelete(done) {
-            for (var i = salvedTerms.length - 1; i >= 0; i--) {
-              if (r.get(fieldName).indexOf(salvedTerms[i]) === -1) {
-                // delete
-                // model term to delete array
-                termsToDelete.push(salvedTerms[i]);
-                salvedTerms.splice(salvedTerms.indexOf(salvedTerms[i]), 1);
-              } else {
-                termsToSave.splice(termsToSave.indexOf(termsToSave[i]), 1);
+          // Cleanup
+          function cleanupOldRecordTags(done) {
+            we.db.models.modelsterms
+            .destroy({
+              where: {
+                modelName: r.getModelName(),
+                modelId: r.id,
+                field: fieldName,
+                vocabularyName: fieldConfig.vocabularyName
               }
-            }
-            done();
-          },
-          // delete removed terms
-          function deleteTerms(done) {
-            if (we.utils._.isEmpty(termsToDelete)) return done();
-
-            we.utils.async.each(termsToDelete, function (termToDelete, next) {
-              var objToDelete;
-              for (var i = salvedmodelterms.length - 1; i >= 0; i--) {
-                if (salvedmodelterms[i].get('term').get('text') === termToDelete) {
-                  objToDelete = salvedmodelterms[i];
-                  break;
-                }
-              }
-
-              if (!objToDelete) {
-                log.warn('deleteTerms: Associated term not found for delete: ', termToDelete);
-                return next();
-              }
-
-              objToDelete.destroy().then( function () {
-                salvedmodelterms.splice(i, 1);
-                next();
-              }).catch(next);
-            }, done);
+            })
+            .then( ()=> {
+              done();
+              return null;
+            })
+            .catch(done);
           },
           // save new terms
           function saveTerms(done) {
@@ -523,12 +515,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
               termFields[fieldName],
             function afterSaveModelTerms(err, terms) {
               if(err) return done(err);
-              salvedTerms = salvedTerms.concat(terms);
+
+              salvedTerms = terms;
               return done();
             });
           },
           function setRecordTerms(done) {
-            r.set[fieldName] = salvedTerms;
+            r.setDataValue(fieldName, salvedTerms);
             done();
           }
         ], nextField);
@@ -536,7 +529,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         if (err) return done(err);
         return done();
       });
-    }
+    };
 
     term.loadModelTerms =  function loadModelTerms(record, fieldName, modelName, next) {
       return db.models.modelsterms.findAll({
@@ -547,7 +540,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       .then(function (modelterms) {
         if (we.utils._.isEmpty(modelterms)) return next();
 
-        var terms = modelterms.map(function (modelterm) {
+        const terms = modelterms.map(function (modelterm) {
           return modelterm.get().term.get().text;
         });
 
@@ -557,7 +550,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         return null;
       })
       .catch(next);
-    }
+    };
 
     we.term = term;
   });

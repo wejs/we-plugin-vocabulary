@@ -7,7 +7,7 @@
  */
 module.exports = function Model(we) {
   // set sequelize model define and options
-  var model = {
+  return {
     definition: {
       name: {
         type: we.db.Sequelize.STRING,
@@ -32,8 +32,8 @@ module.exports = function Model(we) {
          *
          * @return {Object} Sequelize query promisse
          */
-        getTagUsageCount: function getTagUsageCount() {
-          var sql = 'SELECT terms.id, terms.text, COUNT(modelsterms.id) AS count '+
+        getTagUsageCount() {
+          const sql = 'SELECT terms.id, terms.text, COUNT(modelsterms.id) AS count '+
             ' FROM terms '+
             ' INNER JOIN modelsterms ON modelsterms.termId=terms.id '+
             ' WHERE terms.vocabularyName=? AND modelsterms.vocabularyName=? '+
@@ -44,13 +44,13 @@ module.exports = function Model(we) {
         }
       },
       hooks: {
-        afterDestroy: function afterDestroy (r, opts, done) {
+        afterDestroy(r, opts, done) {
           we.utils.async.parallel([
             function destroyRelatedModelsterms (cb) {
               return we.db.models.modelsterms.destroy({
                 where: { vocabularyName: r.name }
               })
-              .nodeify(cb)
+              .nodeify(cb);
             },
             function destroyVocabularyTerms (cb) {
               return we.db.models.terms.destroy({
@@ -62,7 +62,5 @@ module.exports = function Model(we) {
         }
       }
     }
-  }
-
-  return model;
-}
+  };
+};

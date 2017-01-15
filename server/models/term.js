@@ -8,7 +8,7 @@
 
 module.exports = function Model(we) {
   // set sequelize model define and options
-  var model = {
+  return {
     definition: {
       text: {
         type: we.db.Sequelize.STRING,
@@ -33,17 +33,17 @@ module.exports = function Model(we) {
          * @param  {Object}   res  express.js response
          * @param  {Function} done callback
          */
-        contextLoader: function contextLoader (req, res, done) {
+        contextLoader(req, res, done) {
           if (!res.locals.id || !res.locals.loadCurrentRecord) return done();
 
-          var where = {};
+          let where = {};
           // need to check if is id to skip postgreql error if search for texts in number
           if (Number(res.locals.id) ) {
             where = {
               $or: { id: res.locals.id, text: res.locals.id }
-            }
+            };
           } else {
-            where = { text: res.locals.id }
+            where = { text: res.locals.id };
           }
 
           return this.findOne({
@@ -62,7 +62,8 @@ module.exports = function Model(we) {
             }
 
             done();
-          })
+            return null;
+          });
         }
       },
       instanceMethods: {
@@ -71,14 +72,15 @@ module.exports = function Model(we) {
          *
          * @return {String} url path
          */
-        getUrlPath: function getUrlPath() {
+        getUrlPath() {
           return we.router.urlTo(
             this.$modelOptions.name.singular + '.findOne', [this.vocabularyName, this.text]
           );
         },
 
-        loadRelatedRecords: function loadRelatedRecords (opts, cb) {
-          return we.db.models.modelsterms.findAndCountAll({
+        loadRelatedRecords(opts, cb) {
+          return we.db.models.modelsterms
+          .findAndCountAll({
             where: { termId: this.id },
             order: [['modelId', 'DESC']],
             limit: opts.limit,
@@ -86,23 +88,24 @@ module.exports = function Model(we) {
           })
           .then(function afterLoadRelatedRecords (r) {
 
-            we.utils.async.each(r.rows, function (modelsterms, next){
-              modelsterms.loadRelatedRecord(next)
-            }, function (err) {
+            we.utils.async.each(r.rows, (modelsterms, next)=> {
+              modelsterms.loadRelatedRecord(next);
+            }, (err)=> {
               cb(err, r);
             });
 
-            return r
+            return r;
           })
           .catch(cb);
         }
       },
       hooks: {
-        afterDestroy: function afterDestroy (record, opts, done) {
+        afterDestroy(record, opts, done) {
           done();
           if (record && record.id) {
             // remove model associations in term
-            we.db.models.modelsterms.destroy({
+            we.db.models.modelsterms
+            .destroy({
               where: {
                 $or: [
                   { termId: record.id },
@@ -114,6 +117,5 @@ module.exports = function Model(we) {
         }
       }
     }
-  }
-  return model;
-}
+  };
+};

@@ -213,37 +213,49 @@ describe('termFeature', function () {
         assert(res.body.page.title, newTitle);
         salvedPage.title = newTitle;
 
-        we.db.models.modelsterms.findAll({
+        we.db.models.modelsterms
+        .findAll({
           where: {
             modelName: 'page',
             modelId: salvedPage.id,
             field: 'tags'
           },
           include: [{ all: true,  attributes: ['text'] }]
-        }).then(function (result) {
+        })
+        .then(function (result) {
 
           var terms = result.map(function(modelterm) {
             return modelterm.get().term.get().text;
           });
 
+            console.log(newTags, terms);
+
           assert( _.isEqual(newTags, terms) );
 
-          we.db.models.modelsterms.findAll({
+          we.db.models.modelsterms
+          .findAll({
             where: {
               modelName: 'page',
               modelId: salvedPage.id,
               field: 'categories'
             },
             include: [{ all: true,  attributes: ['text'] }]
-          }).then(function(result) {
-              var terms = result.map(function(modelterm) {
+          })
+          .then(function(result) {
+            // console.log('>>', result);
+
+            var terms = result.map(function(modelterm) {
               return modelterm.get().term.get().text;
             });
-            assert( _.isEqual(newCategories, terms) );
-            return done();
-          });
-        })
 
+            console.log(newCategories, terms);
+
+            assert( _.isEqual(newCategories, terms) );
+            done();
+            return null;
+          })
+          .catch(done);
+        });
       });
     });
   });

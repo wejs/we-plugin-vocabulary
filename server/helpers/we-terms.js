@@ -11,12 +11,13 @@ module.exports = function(we) {
    * @return {String}
    */
   return function render(terms) {
-    var options = arguments[arguments.length-1];
-    var html = '', vocabularyName;
+    const options = arguments[arguments.length-1],
+      attributes = [];
 
-    var attributes = [];
+    let html = '', vocabularyName;
+
     // pass helper attributes to link element
-    for (var attributeName in options.hash) {
+    for (let attributeName in options.hash) {
       attributes.push(attributeName + '="' + options.hash[attributeName] + '"');
     }
 
@@ -25,12 +26,14 @@ module.exports = function(we) {
     html += '<ul class="tags" >';
 
     if (terms) {
-      for (var i = 0; i < terms.length; i++) {
-        html += '<li><a class="term-link" href="/vocabulary/'+vocabularyName+'/term/'+terms[i]+'">'+terms[i]+'</a></li>';
+      for (let i = 0; i < terms.length; i++) {
+        html += '<li><a class="term-link" href="/vocabulary/'+
+          vocabularyName+
+          '/term/'+terms[i]+'">'+terms[i]+'</a></li>';
       }
     }
 
     html += '</ul>';
     return new we.hbs.SafeString(html);
-  }
-}
+  };
+};

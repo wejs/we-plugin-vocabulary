@@ -8,7 +8,7 @@
 
 module.exports = function Model(we) {
   // set sequelize model define and options
-  var model = {
+  return {
     definition: {
       modelName: {
         type: we.db.Sequelize.STRING,
@@ -51,26 +51,22 @@ module.exports = function Model(we) {
     options: {
       classMethods: {},
       instanceMethods: {
-        loadRelatedRecord: function loadRelatedRecord(cb) {
-          var self = this;
-          we.db.models[this.modelName].findOne({
+        loadRelatedRecord(cb) {
+          const self = this;
+          we.db.models[this.modelName]
+          .findOne({
             where: { id: this.modelId },
             include: [{ all: true }]
           })
           .then(function afterLoadRelatedRecord(r) {
-
             self.relatedRecord = r;
             cb();
-
             return r;
-
           })
           .catch(cb);
         }
       },
       hooks: {}
     }
-  }
-
-  return model;
-}
+  };
+};
