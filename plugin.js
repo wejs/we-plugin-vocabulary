@@ -5,6 +5,7 @@
  */
 module.exports = function loadPlugin(projectPath, Plugin) {
   const plugin = new Plugin(__dirname);
+
   // set plugin configs
   plugin.setConfigs({
     permissions: {
@@ -51,99 +52,18 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     }
   });
 
-  // // admin vocabulary resource
-  // plugin.setResource({
-  //   namePrefix: 'admin.',
-  //   name: 'vocabulary',
-  //   namespace: '/admin',
-  //   templateFolderPrefix: 'admin/'
-  // });
-  // // terms admin resource
-  // plugin.setResource({
-  //   namePrefix: 'admin.',
-  //   parent: 'admin.vocabulary',
-  //   name: 'term',
-  //   templateFolderPrefix: 'admin/'
-  // });
-
   plugin.setResource({
     name: 'vocabulary',
     routeId: ':vocabularyId'
   });
   plugin.setResource({
+    parent: 'vocabulary',
     name: 'term',
     routeId: ':termId'
   });
 
   // set plugin routes
   plugin.setRoutes({
-    // 'get /vocabulary': {
-    //   resourceName: 'vocabulary',
-    //   name: 'vocabulary.find',
-    //   action: 'find',
-    //   controller: 'vocabulary',
-    //   model: 'vocabulary',
-    //   template: 'vocabulary/find',
-    //   permission: 'find_vocabulary',
-    //   titleHandler: 'i18n',
-    //   titleI18n: 'vocabulary.find',
-    //   breadcrumbHandler: 'find'
-    // },
-    // 'get /vocabulary/:vocabularyId': {
-    //   paramIgit dName: 'vocabularyId',
-    //   resourceName: 'vocabulary',
-    //   name: 'vocabulary.findOne',
-    //   action: 'findOne',
-    //   controller: 'vocabulary',
-    //   model: 'vocabulary',
-    //   template: 'vocabulary/findOne',
-    //   permission: 'find_vocabulary',
-    //   titleHandler: 'recordField',
-    //   titleField: 'name',
-    //   breadcrumbHandler: 'findOne'
-    // },
-    // 'get /vocabulary/:vocabularyId/term': {
-    //   resourceName: 'term',
-    //   name: 'term.find',
-    //   action: 'find',
-    //   controller: 'term',
-    //   model: 'term',
-    //   template: 'term/find',
-    //   permission: 'find_term',
-    //   titleHandler: 'i18n',
-    //   titleI18n: 'term.find',
-    //   // default search
-    //   search: {
-    //     text:  {
-    //       parser: 'startsWith',
-    //       target: {
-    //         type: 'field',
-    //         field: 'text'
-    //       }
-    //     },
-    //     vocabularyName: {
-    //       parser: 'equal',
-    //       target: {
-    //         type: 'field',
-    //         field: 'vocabularyName'
-    //       }
-    //     }
-    //   },
-    //   breadcrumbHandler: 'find'
-    // },
-    // 'get /vocabulary/:vocabularyId/term/:termId': {
-    //   paramIdName: 'termId',
-    //   resourceName: 'term',
-    //   name: 'term.findOne',
-    //   action: 'findOne',
-    //   controller: 'term',
-    //   model: 'term',
-    //   template: 'term/findOne',
-    //   permission: 'find_term',
-    //   titleHandler: 'recordField',
-    //   titleField: 'text',
-    //   breadcrumbHandler: 'findOne'
-    // },
     // Term
     'get /api/v1/term-texts': {
       controller    : 'term',
@@ -210,7 +130,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
   plugin.hooks.on('we:models:before:instance', function (we, done) {
     let f, cfgs;
     const models = we.db.modelsConfigs;
-    for (var modelName in models) {
+    for (let modelName in models) {
 
       if (models[modelName].options && models[modelName].options.termFields) {
 
