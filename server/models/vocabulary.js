@@ -53,7 +53,7 @@ module.exports = function Model(we) {
               .nodeify(cb);
             },
             function destroyVocabularyTerms (cb) {
-              return we.db.models.terms.destroy({
+              return we.db.models.term.destroy({
                 where: { vocabularyName: r.name }
               })
               .nodeify(cb);
