@@ -107,7 +107,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       where = { name: id };
     }
 
-    plugin.we.db.models.vocabulary.findOne({
+    plugin.we.db.models.vocabulary
+    .findOne({
       where: where
     })
     .then(function afterLoadVocabulary(v) {

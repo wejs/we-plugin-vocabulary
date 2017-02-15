@@ -23,6 +23,7 @@ module.exports = function Model(we) {
         allowNull: false
       }
     },
+    associations: {},
     options: {
       titleField: 'text',
       classMethods: {
