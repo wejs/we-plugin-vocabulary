@@ -55,6 +55,10 @@ module.exports = {
   findTermTexts(req, res) {
     res.locals.query.attributes = ['text'];
 
+    if (!res.locals.query.where.vocabularyName) {
+      res.locals.query.where.vocabularyName = req.query.vocabularyName;
+    }
+
     res.locals.Model
     .findAndCountAll(res.locals.query)
     .then(function afterFindAndCount(record) {
