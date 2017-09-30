@@ -112,7 +112,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       where: where
     })
     .then(function afterLoadVocabulary(v) {
-      if (!v) return res.notFound();
+      if (!v) {
+        res.notFound();
+        return null;
+      }
       res.locals.currentVocabulary = v;
       req.params.vocabularyName = v.name;
       next();
@@ -200,13 +203,16 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     };
 
     term.saveModelTerms = function saveModelTerms(modelName, modelId, req, fieldName, isTags, cb) {
-      return db.models.modelsterms.create({
+      return db.models.modelsterms
+      .create({
         modelName: modelName,
         modelId: modelId,
         field: fieldName,
         isTags: true
-      }).then(function(terms) {
-        return cb(null, terms);
+      })
+      .then( (terms)=> {
+        cb(null, terms);
+        return null;
       });
     };
 
@@ -243,7 +249,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             log.verbose(
               'term.on:createdResponse: Cant create the term assoc:', term, fieldName, fieldConfig.vocabularyName
             );
-            return nextTerm();
+            nextTerm();
+            return null;
           }
 
           let termObj;
@@ -269,9 +276,14 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           })
           .catch(nextTerm);
         });
-      }, function (err) {
-        if (err) return done(err);
-        return done(null, salvedTerms);
+      }, (err)=> {
+        if (err) {
+          done(err);
+        } else {
+          done(null, salvedTerms);
+        }
+
+        return null;
       });
     };
 
@@ -282,7 +294,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           if (typeof val === 'string') {
             this.setDataValue(fieldName, [val.toLowerCase()]);
           } else if ( we.utils._.isArray(val) ) {
-            this.setDataValue(fieldName, val.map(function (v) {
+            this.setDataValue(fieldName, val.map( (v)=> {
               return v.toLowerCase();
             }));
           }
@@ -308,7 +320,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       let fieldNames = Object.keys(termFields);
 
       fieldNames.forEach(function (fieldName) {
-        if (we.utils._.isEmpty(r.get(fieldName))) return;
+        if (we.utils._.isEmpty(r.get(fieldName))) return null;
 
         functions.push(function (next) {
           term.createModelTerms(
@@ -320,7 +332,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           function afterSaveModelTerms(err, terms) {
             if(err) return next(err);
             r.set(fieldName, terms);
-            return next();
+            next();
+            return null;
           });
         });
       });
@@ -352,8 +365,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             attributes: ['id'],
             include: [{ all: true,  attributes: ['id', 'text', 'vocabularyName'] }]
           })
-          .then(function (modelterms) {
-            if (we.utils._.isEmpty(modelterms)) return next();
+          .then( (modelterms)=> {
+            if (we.utils._.isEmpty(modelterms)) {
+              next();
+              return null;
+            }
             // save models terms assoc as cache
             r._salvedModelTerms[fieldName] = modelterms;
 
@@ -383,7 +399,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           modelId: r.id
         }
       })
-      .then(function (result) {
+      .then( (result)=> {
         log.debug('Deleted ' + result + ' terms from record with id: ' + r.id);
         done();
 
@@ -396,7 +412,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       const Model = this;
 
       let termFields = term.getModelTermFields(this);
-      if (!termFields) return done();
+      if (!termFields) {
+        done();
+        return null;
+      }
 
       let fieldNames = Object.keys(termFields);
       we.utils.async.eachSeries(fieldNames, function (fieldName, nextField) {
@@ -428,7 +447,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           },
           // save new terms
           function saveTerms(done) {
-            if (we.utils._.isEmpty(termsToSave)) return done();
+            if (we.utils._.isEmpty(termsToSave)) {
+              done();
+              return null;
+            }
             term.createModelTerms(
               termsToSave,
               Model.name, r.id,
@@ -458,10 +480,13 @@ module.exports = function loadPlugin(projectPath, Plugin) {
         attributes: ['id'],
         include: [{ all: true,  attributes: ['id', 'text', 'vocabularyName'] }]
       })
-      .then(function (modelterms) {
-        if (we.utils._.isEmpty(modelterms)) return next();
+      .then( (modelterms)=> {
+        if (we.utils._.isEmpty(modelterms)) {
+          next();
+          return null;
+        }
 
-        const terms = modelterms.map(function (modelterm) {
+        const terms = modelterms.map( (modelterm)=> {
           return modelterm.get().term.get().text;
         });
 

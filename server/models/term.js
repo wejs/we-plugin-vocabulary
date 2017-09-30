@@ -52,7 +52,10 @@ module.exports = function Model(we) {
             include: [{ all: true }]
           })
           .nodeify(function afterFindTerm (err, record) {
-            if (err) return done(err);
+            if (err) {
+              done(err);
+              return null;
+            }
 
             res.locals.data = record;
             if (record && record.dataValues.creatorId && req.isAuthenticated()) {

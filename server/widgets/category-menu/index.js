@@ -5,7 +5,7 @@
  */
 
 module.exports = function categoryMenuWidget(projectPath, Widget) {
-  var widget = new Widget('category-menu', __dirname);
+  const widget = new Widget('category-menu', __dirname);
 
   widget.beforeSave = function htmlWidgetBeforeSave(req, res, next) {
     req.body.configuration = {
@@ -14,36 +14,38 @@ module.exports = function categoryMenuWidget(projectPath, Widget) {
     };
 
     return next();
-  }
+  };
 
   widget.viewMiddleware = function viewMiddleware(widget, req, res, next) {
-    req.we.db.models.term.findAll({
+    req.we.db.models.term
+    .findAll({
       where: {
         vocabularyName: widget.configuration.selectedVocabulary
       },
       limit: 25
     })
-    .then(function (t) {
+    .then( (t)=> {
       widget.terms = t;
       next();
 
       return null;
     })
     .catch(next);
-  }
+  };
 
   widget.formMiddleware = function formMiddleware(req, res, next) {
-    req.we.db.models.vocabulary.findAll({
+    req.we.db.models.vocabulary
+    .findAll({
       attributes: ['id', 'name']
     })
-    .then(function (vocabularies) {
+    .then( (vocabularies)=> {
       res.locals.vocabularies = vocabularies;
       next();
 
       return null;
     })
     .catch(next);
-  }
+  };
 
   return widget;
 };

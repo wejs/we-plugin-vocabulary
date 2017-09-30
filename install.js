@@ -5,29 +5,29 @@ module.exports = {
    * @param  {Object}   we    we.js object
    * @param  {Function} done  callback
    */
-  install: function install(we, done) {
+  install(we, done) {
     we.utils.async.series([
       function createTagsVocabulary(done) {
-        we.db.models.vocabulary.findOrCreate({
+        we.db.models.vocabulary
+        .findOrCreate({
           where: { name: 'Tags' },
           defaults: { name: 'Tags' },
         })
-        .then(function(){
-          done()
-
-          return null
+        .then( ()=> {
+          done();
+          return null;
         })
-        .catch(done)
+        .catch(done);
       },
       function createCategoryVocabulary(done) {
-        we.db.models.vocabulary.findOrCreate({
+        we.db.models.vocabulary
+        .findOrCreate({
           where: { name: 'Category' },
           defaults: { name: 'Category' }
         })
-        .then(function(){
-          done()
-
-          return null
+        .then( ()=> {
+          done();
+          return null;
         })
         .catch(done);
       }
@@ -40,57 +40,53 @@ module.exports = {
    * @param  {Object} we we.js object
    * @return {Array}    a list of update objects
    */
-  updates: function updates() {
+  updates() {
     return [{
       version: '0.3.15', // your plugin version
-      update: function (we, done) {
+      update(we, done) {
         we.utils.async.series([
           function createTagsVocabulary (done) {
             we.db.models.vocabulary.findOrCreate({
               where: { name: 'Tags' },
               defaults: { name: 'Tags' },
             })
-            .then(function() {
-              done()
-
-              return null
+            .then( ()=> {
+              done();
+              return null;
             })
-            .catch(done)
+            .catch(done);
           },
           function createCategoryVocabulary(done) {
             we.db.models.vocabulary.findOrCreate({
               where: { name: 'Category' },
               defaults: { name: 'Category' }
             })
-            .then(function() {
-              done()
-
-              return null
+            .then( ()=> {
+              done();
+              return null;
             })
-            .catch(done)
+            .catch(done);
           },
 
           function updateOldTags(done) {
             we.db.models.term.update({ vocabularyName: 'Tags' },{
               where: { vocabularyName: null },
             })
-            .then(function() {
-              done()
-
-              return null
+            .then( ()=> {
+              done();
+              return null;
             })
-            .catch(done)
+            .catch(done);
           },
           function updateOldModelAssocTags(done) {
             we.db.models.modelsterms.update({ vocabularyName: 'Tags' },{
               where: { vocabularyName: null },
             })
-            .then(function() {
-              done()
-
-              return null
+            .then( ()=> {
+              done();
+              return null;
             })
-            .catch(done)
+            .catch(done);
           }
         ], done);
       }

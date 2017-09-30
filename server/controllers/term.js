@@ -82,7 +82,10 @@ function findTerms(req, res, next) {
   return res.locals.Model
   .findAndCountAll(res.locals.query)
   .then(function afterFindAndCount(record) {
-    if (!record) return next();
+    if (!record) {
+      next();
+      return null;
+    }
 
     res.locals.metadata.count = record.count;
     res.locals.data = record.rows;
