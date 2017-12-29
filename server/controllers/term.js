@@ -94,5 +94,5 @@ function findTerms(req, res, next) {
 
     return null;
   })
-  .catch(req.queryError);
+  .catch(res.queryError);
 }
