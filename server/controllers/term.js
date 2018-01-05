@@ -52,6 +52,32 @@ module.exports = {
     });
   },
 
+  findOneTermContent(req, res, next) {
+    if (
+      !req.params.modelName ||
+      !req.we.db.models[ req.params.modelName ]
+    ) {
+      return res.notFound();
+    }
+
+    res.locals.id = req.params.termId;
+    res.locals.loadCurrentRecord = true;
+
+    const theme = res.getTheme();
+    // alternative template
+    const altTpl = 'term/findOne-'+req.params.modelName;
+    if ( theme && theme.templates[altTpl] ) {
+      res.locals.template = altTpl;
+    }
+
+    req.we.db.models.term.contextLoader(req, res, (err)=> {
+      if (err) return next(err);
+      res.locals.query.modelName = req.params.modelName;
+      req.we.controllers.term.findOne(req, res, next);
+      return null;
+    });
+  },
+
   findTermTexts(req, res) {
     res.locals.query.attributes = ['text'];
 

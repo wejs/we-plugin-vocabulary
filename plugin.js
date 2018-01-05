@@ -71,12 +71,18 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       model         : 'term',
       responseType  : 'json'
     },
-
     'get /vocabulary/:vocabularyId/tag-clound': {
       controller    : 'vocabulary',
       action        : 'getTagUsageCount',
       model         : 'term',
       responseType  : 'json'
+    },
+
+    'get /vocabulary/:vocabularyId/term/:termId/:modelName': {
+      controller    : 'term',
+      action        : 'findOneTermContent',
+      model         : 'term',
+      template      : 'term/findOne'
     }
   });
 

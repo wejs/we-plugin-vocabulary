@@ -1,14 +1,12 @@
-var assert = require('assert');
-var request = require('supertest');
-var helpers = require('we-test-tools').helpers;
-var stubs = require('we-test-tools').stubs;
-var querystring = require('querystring');
-var http;
-var we, async,_;
+const assert = require('assert'),
+  request = require('supertest'),
+  helpers = require('we-test-tools').helpers,
+  stubs = require('we-test-tools').stubs;
+
+let http, we, async,_;
+let salvedPage, salvedUser, salvedUserPassword, salvedVocabulary, savedTerms;
 
 describe('termFeature', function () {
-  var salvedPage, salvedUser, salvedUserPassword, salvedVocabulary, savedTerms;
-
   before(function (done) {
     http = helpers.getHttp();
     we = helpers.getWe();
@@ -55,7 +53,7 @@ describe('termFeature', function () {
 
             savedTerms = ts;
             done();
-          })
+          });
         }).catch(done);
       }
     ], done);
@@ -87,16 +85,18 @@ describe('termFeature', function () {
       });
     });
 
-    it('get /term-texts?where should find term texts', function(done){
+    it('get /term-texts?vocabularyName should find term texts', function(done){
 
       request(http)
-      .get('/api/v1/term-texts')
+      .get('/api/v1/term-texts?vocabularyName=Category')
       .set('Accept', 'application/json')
       .end(function (err, res) {
         assert.equal(200, res.status);
         assert(res.body.term);
         assert( _.isArray(res.body.term) , 'term not is array');
         assert(res.body.meta);
+
+        console.log('<>' ,res.body.meta);
 
         assert(res.body.meta.count);
 

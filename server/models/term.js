@@ -72,7 +72,7 @@ module.exports = function Model(we) {
       },
       instanceMethods: {
         /**
-         *et url path instance method
+         * set url path instance method
          *
          * @return {String} url path
          */
@@ -82,11 +82,25 @@ module.exports = function Model(we) {
           );
         },
 
+        /**
+         * Load term related records
+         *
+         * @param  {Object}    opts {limit, offset, modelName}
+         * @param  {Function}  cb   Callback
+         * @return {Promise}
+         */
         loadRelatedRecords(opts, cb) {
+          const where = { termId: this.id };
+
+          if (opts.modelName) where.modelName = opts.modelName;
+
           return we.db.models.modelsterms
           .findAndCountAll({
-            where: { termId: this.id },
-            order: [['modelId', 'DESC']],
+            where: where,
+            order: [
+              [ 'createdAt', 'DESC' ],
+              [ 'modelId', 'DESC' ]
+            ],
             limit: opts.limit,
             offset: opts.offset
           })
