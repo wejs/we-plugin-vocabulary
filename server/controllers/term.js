@@ -63,12 +63,7 @@ module.exports = {
     res.locals.id = req.params.termId;
     res.locals.loadCurrentRecord = true;
 
-    const theme = res.getTheme();
-    // alternative template
-    const altTpl = 'term/findOne-'+req.params.modelName;
-    if ( theme && theme.templates[altTpl] ) {
-      res.locals.template = altTpl;
-    }
+    res.locals.template = resolveTermContentAltTemplate(req, res);
 
     req.we.db.models.term.contextLoader(req, res, (err)=> {
       if (err) return next(err);
@@ -103,6 +98,23 @@ module.exports = {
     .catch(res.queryError);
   }
 };
+
+function resolveTermContentAltTemplate(req, res) {
+  const theme = res.getTheme();
+  // alternative templates
+
+  let altTpl = 'term/findOne-'+'term'+res.locals.id+'-'+req.params.modelName;
+  if ( theme && theme.templates[altTpl] ) {
+    return altTpl;
+  }
+
+  altTpl = 'term/findOne-'+req.params.modelName;
+  if ( theme && theme.templates[altTpl] ) {
+    return altTpl;
+  }
+
+  return res.locals.template;
+}
 
 function findTerms(req, res, next) {
   return res.locals.Model
