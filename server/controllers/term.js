@@ -102,8 +102,17 @@ module.exports = {
 function resolveTermContentAltTemplate(req, res) {
   const theme = res.getTheme();
   // alternative templates
+  let altTpl = '';
 
-  let altTpl = 'term/findOne-'+'term'+res.locals.id+'-'+req.params.modelName;
+  if (res.locals.data && res.locals.data.text) {
+    const nst = req.we.utils.string(res.locals.data.text).slugify().s;
+    altTpl = 'term/findOne-'+'term-'+nst+'-'+req.params.modelName;
+    if ( theme && theme.templates[altTpl] ) {
+      return altTpl;
+    }
+  }
+
+  altTpl = 'term/findOne-'+'term'+res.locals.id+'-'+req.params.modelName;
   if ( theme && theme.templates[altTpl] ) {
     return altTpl;
   }
