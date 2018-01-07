@@ -41,6 +41,20 @@ module.exports = {
   findOne(req, res, next) {
     if (!res.locals.data) return next();
 
+    // Change url ids to vocabulary and term texts:
+    if (
+      req.params.vocabularyId != res.locals.data.vocabularyName ||
+      res.locals.id != res.locals.data.text
+    ) {
+      if (req.params.modelName) {
+        return res.goTo(
+          '/vocabulary/'+res.locals.data.vocabularyName+'/term/'+res.locals.data.text+'/'+req.params.modelName
+        );
+      } else {
+        return res.goTo('/vocabulary/'+res.locals.data.vocabularyName+'/term/'+res.locals.data.text);
+      }
+    }
+
     res.locals.data
     .loadRelatedRecords(res.locals.query, (err, r)=> {
       if (err) return next(err);
@@ -63,10 +77,9 @@ module.exports = {
     res.locals.id = req.params.termId;
     res.locals.loadCurrentRecord = true;
 
-    res.locals.template = resolveTermContentAltTemplate(req, res);
-
     req.we.db.models.term.contextLoader(req, res, (err)=> {
       if (err) return next(err);
+      res.locals.template = resolveTermContentAltTemplate(req, res);
       res.locals.query.modelName = req.params.modelName;
       req.we.controllers.term.findOne(req, res, next);
       return null;
@@ -88,9 +101,7 @@ module.exports = {
         term: record.rows.map( (record)=> {
           return record.text;
         }),
-        meta: {
-          count: record.count
-        }
+        meta: { count: record.count }
       });
 
       return null;
@@ -104,11 +115,20 @@ function resolveTermContentAltTemplate(req, res) {
   // alternative templates
   let altTpl = '';
 
-  if (res.locals.data && res.locals.data.text) {
-    const nst = req.we.utils.string(res.locals.data.text).slugify().s;
-    altTpl = 'term/findOne-'+'term-'+nst+'-'+req.params.modelName;
-    if ( theme && theme.templates[altTpl] ) {
-      return altTpl;
+  if (res.locals.data) {
+    if (res.locals.data.text) {
+      const nst = req.we.utils.string(res.locals.data.text).slugify().s;
+      altTpl = 'term/findOne-'+'term-'+nst+'-'+req.params.modelName;
+      if ( theme && theme.templates[altTpl] ) {
+        return altTpl;
+      }
+    }
+
+    if (res.locals.data.id) {
+      altTpl = 'term/findOne-'+'term'+res.locals.data.id+'-'+req.params.modelName;
+      if ( theme && theme.templates[altTpl] ) {
+        return altTpl;
+      }
     }
   }
 

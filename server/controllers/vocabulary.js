@@ -17,6 +17,7 @@ module.exports = {
     })
     .catch(next);
   },
+
   /**
    * findOne Vocabulary
    *
