@@ -112,35 +112,41 @@ module.exports = {
 
 function resolveTermContentAltTemplate(req, res) {
   const theme = res.getTheme();
+  const tn = res.locals.theme || ''; // theme name
   // alternative templates
   let altTpl = '';
+
+  let tpls = req.we.view.templateCache;
+  if (req.we.env != 'prod') {
+    if (theme && theme.templates) {
+      tpls = theme.templates;
+    } else {
+      tpls = {};
+    }
+  }
 
   if (res.locals.data) {
     if (res.locals.data.text) {
       const nst = req.we.utils.string(res.locals.data.text).slugify().s;
       altTpl = 'term/findOne-'+'term-'+nst+'-'+req.params.modelName;
-      if ( theme && theme.templates[altTpl] ) {
-        return altTpl;
-      }
+      if ( tpls[altTpl] ) return altTpl;
+      if ( tpls[tn+'/'+altTpl] ) return altTpl;
     }
 
     if (res.locals.data.id) {
       altTpl = 'term/findOne-'+'term'+res.locals.data.id+'-'+req.params.modelName;
-      if ( theme && theme.templates[altTpl] ) {
-        return altTpl;
-      }
+      if ( tpls[altTpl] ) return altTpl;
+      if ( tpls[tn+'/'+altTpl] ) return altTpl;
     }
   }
 
   altTpl = 'term/findOne-'+'term'+res.locals.id+'-'+req.params.modelName;
-  if ( theme && theme.templates[altTpl] ) {
-    return altTpl;
-  }
+  if ( tpls[altTpl] ) return altTpl;
+  if ( tpls[tn+'/'+altTpl] ) return altTpl;
 
   altTpl = 'term/findOne-'+req.params.modelName;
-  if ( theme && theme.templates[altTpl] ) {
-    return altTpl;
-  }
+  if ( tpls[altTpl] ) return altTpl;
+  if ( tpls[tn+'/'+altTpl] ) return altTpl;
 
   return res.locals.template;
 }
