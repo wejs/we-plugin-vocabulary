@@ -369,7 +369,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           return db.models.modelsterms.findAll({
             where: { modelName: Model.name, modelId: r.id, field: fieldName },
             attributes: ['id'],
-            include: [{ all: true,  attributes: ['id', 'text', 'vocabularyName'] }]
+            include: [{
+              model: db.models.term,
+              as: 'term',
+              attributes: ['id', 'text', 'vocabularyName']
+            }]
           })
           .then( (modelterms)=> {
             if (we.utils._.isEmpty(modelterms)) {
@@ -484,7 +488,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       return db.models.modelsterms.findAll({
         where: { modelName: modelName, modelId: record.id, field: fieldName },
         attributes: ['id'],
-        include: [{ all: true,  attributes: ['id', 'text', 'vocabularyName'] }]
+        include: [{
+          model: db.models.term,
+          as: 'term',
+          attributes: ['id', 'text', 'vocabularyName']
+        }]
       })
       .then( (modelterms)=> {
         if (we.utils._.isEmpty(modelterms)) {

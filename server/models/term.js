@@ -22,7 +22,16 @@ module.exports = function Model(we) {
         allowNull: false
       }
     },
-    associations: {},
+    associations: {
+      models: {
+        type: 'hasMany',
+        model: 'modelsterms',
+        inverse: 'term',
+        constraints: false,
+        otherKey: 'id',
+        foreignKey: 'termId'
+      },
+    },
     options: {
       titleField: 'text',
       classMethods: {
