@@ -77,11 +77,39 @@ module.exports = {
     res.locals.id = req.params.termId;
     res.locals.loadCurrentRecord = true;
 
-    req.we.db.models.term.contextLoader(req, res, (err)=> {
+    req.we.db.models.term
+    .contextLoader(req, res, (err)=> {
       if (err) return next(err);
       res.locals.template = resolveTermContentAltTemplate(req, res);
       res.locals.query.modelName = req.params.modelName;
-      req.we.controllers.term.findOne(req, res, next);
+
+      if (!res.locals.data) return next();
+
+      // Change url ids to vocabulary and term texts:
+      if (
+        req.params.vocabularyId != res.locals.data.vocabularyName ||
+        res.locals.id != res.locals.data.text
+      ) {
+        if (req.params.modelName) {
+          return res.goTo(
+            '/vocabulary/'+res.locals.data.vocabularyName+'/term/'+res.locals.data.text+'/'+req.params.modelName
+          );
+        } else {
+          return res.goTo('/vocabulary/'+res.locals.data.vocabularyName+'/term/'+res.locals.data.text);
+        }
+      }
+
+
+      res.locals.data
+      .loadRelatedRecords(res.locals.query, (err, r)=> {
+        if (err) return next(err);
+
+        res.locals.relatedModels = r.rows;
+        res.locals.metadata.relatedModelsCount = r.count;
+
+        return res.ok();
+      });
+
       return null;
     });
   },
@@ -92,6 +120,14 @@ module.exports = {
     if (!res.locals.query.where.vocabularyName) {
       res.locals.query.where.vocabularyName = req.query.vocabularyName;
     }
+
+    if (req.query.term && !req.query.text) {
+      req.query.text = req.query.term;
+    }
+
+    res.locals.query.where.text = {
+      $like: req.query.text+ '%'
+    };
 
     res.locals.Model
     .findAndCountAll(res.locals.query)
