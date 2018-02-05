@@ -125,9 +125,11 @@ module.exports = {
       req.query.text = req.query.term;
     }
 
-    res.locals.query.where.text = {
-      $like: req.query.text+ '%'
-    };
+    if (req.query.text) {
+      res.locals.query.where.text = {
+        $like: req.query.text + '%'
+      };
+    }
 
     res.locals.Model
     .findAndCountAll(res.locals.query)
