@@ -141,19 +141,12 @@ module.exports = {
 };
 
 function resolveTermContentAltTemplate(req, res) {
-  const theme = res.getTheme();
   const tn = res.locals.theme || ''; // theme name
+  const view = req.we.view;
   // alternative templates
   let altTpl = '';
 
-  let tpls = req.we.view.templateCache;
-  if (req.we.env != 'prod') {
-    if (theme && theme.templates) {
-      tpls = theme.templates;
-    } else {
-      tpls = {};
-    }
-  }
+  let tpls = view.configuration.templates;
 
   if (res.locals.data) {
     if (res.locals.data.text) {
