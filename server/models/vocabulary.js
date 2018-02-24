@@ -44,21 +44,26 @@ module.exports = function Model(we) {
         }
       },
       hooks: {
-        afterDestroy(r, opts, done) {
-          we.utils.async.parallel([
-            function destroyRelatedModelsterms (cb) {
-              return we.db.models.modelsterms.destroy({
-                where: { vocabularyName: r.name }
-              })
-              .nodeify(cb);
-            },
-            function destroyVocabularyTerms (cb) {
-              return we.db.models.term.destroy({
-                where: { vocabularyName: r.name }
-              })
-              .nodeify(cb);
-            }
-          ], done);
+        afterDestroy(r) {
+          return new Promise( (resolve, reject)=> {
+            we.utils.async.parallel([
+              function destroyRelatedModelsterms (cb) {
+                return we.db.models.modelsterms.destroy({
+                  where: { vocabularyName: r.name }
+                })
+                .nodeify(cb);
+              },
+              function destroyVocabularyTerms (cb) {
+                return we.db.models.term.destroy({
+                  where: { vocabularyName: r.name }
+                })
+                .nodeify(cb);
+              }
+            ], (err)=> {
+              if (err) return reject(err);
+              resolve();
+            });
+          });
         }
       }
     }

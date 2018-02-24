@@ -49,7 +49,7 @@ module.exports = function Model(we) {
           // need to check if is id to skip postgreql error if search for texts in number
           if (Number(res.locals.id) ) {
             where = {
-              $or: { id: res.locals.id, text: res.locals.id }
+              [we.Op.or]: { id: res.locals.id, text: res.locals.id }
             };
           } else {
             where = { text: res.locals.id };
@@ -126,20 +126,21 @@ module.exports = function Model(we) {
         }
       },
       hooks: {
-        afterDestroy(record, opts, done) {
-          done();
+        afterDestroy(record) {
           if (record && record.id) {
             // remove model associations in term
             we.db.models.modelsterms
             .destroy({
               where: {
-                $or: [
+                [we.Op.or]: [
                   { termId: record.id },
                   { termId: null }
                 ]
               }
             });
           }
+
+          return record;
         }
       }
     }

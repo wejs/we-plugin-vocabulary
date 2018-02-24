@@ -5,6 +5,7 @@
  */
 module.exports = function loadPlugin(projectPath, Plugin) {
   const plugin = new Plugin(__dirname);
+  const Op = plugin.we.Op;
 
   // set plugin configs
   plugin.setConfigs({
@@ -119,7 +120,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     // need to check if is id to skip postgreql error if search for texts in number
     if (Number(id) ) {
       where = {
-        $or: { id: id, name: id }
+        [Op.or]: { id: id, name: id }
       };
     } else {
       where = { name: id };
@@ -190,15 +191,23 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       if ( we.utils._.isEmpty(termFields) ) continue;
 
       models[modelName]
-      .addHook('afterFind', 'loadTerms', function afterFind(r, opts, done) {
-        const Model = this;
-        if ( we.utils._.isArray(r) ) {
-          we.utils.async.eachSeries(r, function (r1, next) {
-            we.term.afterFindRecord.bind(Model)(r1, opts, next);
-          }, done);
-        } else {
-          we.term.afterFindRecord.bind(Model)(r, opts, done) ;
-        }
+      .addHook('afterFind', 'loadTerms', (r, opts)=> {
+        return new Promise( (resolve, reject)=> {
+          const Model = this;
+          if ( we.utils._.isArray(r) ) {
+            we.utils.async.eachSeries(r, function (r1, next) {
+              we.term.afterFindRecord.bind(Model)(r1, opts, next);
+            }, (err)=> {
+              if (err) return reject(err);
+              resolve();
+            });
+          } else {
+            we.term.afterFindRecord.bind(Model)(r, opts, (err)=> {
+              if (err) return reject(err);
+              resolve();
+            }) ;
+          }
+        });
       });
 
       models[modelName].addHook('afterCreate', 'createTerms', we.term.afterCreatedRecord);

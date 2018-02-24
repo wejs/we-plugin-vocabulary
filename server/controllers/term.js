@@ -107,6 +107,8 @@ module.exports = {
   },
 
   findTermTexts(req, res) {
+    const Op = req.we.Op;
+
     res.locals.query.attributes = ['text'];
 
     if (!res.locals.query.where.vocabularyName) {
@@ -119,7 +121,7 @@ module.exports = {
 
     if (req.query.text) {
       res.locals.query.where.text = {
-        $like: req.query.text + '%'
+        [Op.like]: req.query.text + '%'
       };
     }
 
