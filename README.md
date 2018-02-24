@@ -21,3 +21,8 @@ Get vocabulary tag clound data with term count usage count
 ## Copyright and license
 
 [MIT](https://github.com/wejs/we-core/blob/master/LICENSE.md)
+
+## Sponsored by
+
+- Linky Systems: https://linkysystems.com
+- 

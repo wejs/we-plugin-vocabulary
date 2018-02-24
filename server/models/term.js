@@ -86,7 +86,7 @@ module.exports = function Model(we) {
          */
         getUrlPath() {
           return we.router.urlTo(
-            this.$modelOptions.name.singular + '.findOne', [this.vocabularyName, this.text]
+            this.constructor.name + '.findOne', [this.vocabularyName, this.text]
           );
         },
 
