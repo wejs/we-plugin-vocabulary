@@ -1,26 +1,24 @@
 {
   "name": "we-plugin-vocabulary",
-  "description": "We.js vocabulary plugin",
+  "description": "We.js vocabulary, terms and tags plugin",
   "version": "1.2.12",
   "main": "plugin.js",
   "scripts": {
-    "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js",
+    "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha -b test/bootstrap.js test/**/*.test.js",
     "coverage": "NODE_ENV=test LOG_LV=info node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -u exports -R spec test/bootstrap.js test/**/*.test.js"
   },
   "devDependencies": {
-    "express-mysql-session": "^1.2.0",
-    "fs-extra": "^1.0.0",
+    "express-mysql-session": "^1.2.3",
+    "fs-extra": "^5.0.0",
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
-    "mysql": "^2.12.0",
-    "rimraf": "^2.5.4",
-    "supertest": "^2.0.1",
-    "we-core": "^1.12.2",
-    "we-plugin-acl": "^1.2.8",
-    "we-plugin-auth": "^1.2.0",
-    "we-plugin-file": "^1.4.1",
+    "mocha": "^5.0.1",
+    "mysql2": "^1.5.2",
+    "supertest": "^3.0.0",
+    "we-core": "^2",
+    "we-plugin-acl": "^1.2.11",
+    "we-plugin-auth": "^2",
     "we-plugin-page": "^1.0.0",
-    "we-plugin-user": "^1.1.4",
+    "we-plugin-user": "^2",
     "we-test-tools": "0.3.19",
     "we-theme-site-wejs": "^0.3.31"
   },
@@ -34,7 +32,6 @@
     "plugins": {
       "we-plugin-acl": true,
       "we-plugin-auth": true,
-      "we-plugin-file": true,
       "we-plugin-page": true,
       "we-plugin-user": true
     },

@@ -186,14 +186,17 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     const models = we.db.models;
 
     for (let modelName in models) {
+      if (!we.db.modelsConfigs[modelName]) continue;
+
       const termFields = we.term.getModelTermFields(we.db.modelsConfigs[modelName]);
 
       if ( we.utils._.isEmpty(termFields) ) continue;
 
       models[modelName]
       .addHook('afterFind', 'loadTerms', (r, opts)=> {
+        if (!r) return r;
         return new Promise( (resolve, reject)=> {
-          const Model = this;
+          const Model = we.db.models[modelName];
           if ( we.utils._.isArray(r) ) {
             we.utils.async.eachSeries(r, function (r1, next) {
               we.term.afterFindRecord.bind(Model)(r1, opts)

@@ -17,30 +17,31 @@ describe('termFeature', function () {
       function (done) {
         var userStub = stubs.userStub();
         helpers.createUser(userStub, function(err, user) {
-          if (err) throw new Error(err);
+          if (err) {
+            we.log.error(err);
+            return done(err);
+          }
 
           salvedUser = user;
           salvedUserPassword = userStub.password;
-
-          var pageStub = stubs.pageStub(user.id);
-          we.db.models.page.create(pageStub)
-          .then(function (p) {
-            salvedPage = p;
-            return done();
-          }).catch(done);
+          done();
+          return null;
         });
       },
       function createVocabulary(done) {
         var vocabularyStub = stubs.vocabularyStub(salvedUser.id);
         vocabularyStub.name = 'Category';
-        we.db.models.vocabulary.findOrCreate({
+        we.db.models.vocabulary
+        .findOrCreate({
           where: { name: 'Category' },
           defaults: vocabularyStub
         })
         .spread(function (v) {
           salvedVocabulary = v;
           done();
-        }).catch(done);
+          return null;
+        })
+        .catch(done);
       },
       function createTerms(done) {
         var termsStub = stubs.termsStub(
@@ -48,13 +49,25 @@ describe('termFeature', function () {
         );
         we.db.models.term.bulkCreate(termsStub)
         .then(function(){
-          return we.db.models.term.findAll()
+          return we.db.models.term
+          .findAll()
           .then(function(ts) {
-
             savedTerms = ts;
             done();
+            return null;
           });
-        }).catch(done);
+        })
+        .catch(done);
+      },
+      function createPages(done) {
+        var pageStub = stubs.pageStub(salvedUser.id);
+        we.db.models.page.create(pageStub)
+        .then(function (p) {
+          salvedPage = p;
+          done();
+          return null;
+        })
+        .catch(done);
       }
     ], done);
   });
@@ -71,7 +84,7 @@ describe('termFeature', function () {
         assert( _.isArray(res.body.page) , 'page not is array');
         assert(res.body.meta);
 
-        var hasPageTags = false;
+        let hasPageTags = false;
         res.body.page.forEach(function(page) {
           if (page.id === salvedPage.id) {
             if (_.isEqual(page.tags, salvedPage.dataValues.tags) ) {
@@ -95,8 +108,6 @@ describe('termFeature', function () {
         assert(res.body.term);
         assert( _.isArray(res.body.term) , 'term not is array');
         assert(res.body.meta);
-
-        console.log('<>' ,res.body.meta);
 
         assert(res.body.meta.count);
 
@@ -224,15 +235,13 @@ describe('termFeature', function () {
         })
         .then(function (result) {
 
-          var terms = result.map(function(modelterm) {
+          let terms = result.map(function(modelterm) {
             return modelterm.get().term.get().text;
           });
 
-            console.log(newTags, terms);
-
           assert( _.isEqual(newTags, terms) );
 
-          we.db.models.modelsterms
+          return we.db.models.modelsterms
           .findAll({
             where: {
               modelName: 'page',
@@ -242,24 +251,19 @@ describe('termFeature', function () {
             include: [{ all: true,  attributes: ['text'] }]
           })
           .then(function(result) {
-            // console.log('>>', result);
-
-            var terms = result.map(function(modelterm) {
+            let terms = result.map(function(modelterm) {
               return modelterm.get().term.get().text;
             });
-
-            console.log(newCategories, terms);
 
             assert( _.isEqual(newCategories, terms) );
             done();
             return null;
-          })
-          .catch(done);
-        });
+          });
+        })
+        .catch(done);
       });
     });
   });
-
 
   describe('destroy', function () {
     it('delete /page/:id should delete one page and all related modelsterms assoc', function(done){
@@ -271,16 +275,19 @@ describe('termFeature', function () {
       .end(function (err, res) {
         if (err) return done(err);
 
-        we.db.models.modelsterms.findAll({
+        we.db.models.modelsterms
+        .findAll({
           where: {
             modelName: 'page',
             modelId: salvedPage.id,
             field: 'tags'
           }
-        }).then(function(result) {
-          assert(_.isEmpty(result));
-          return done();
         })
+        .then(function(result) {
+          assert(_.isEmpty(result));
+          done();
+          return null;
+        });
       })
     });
   });
