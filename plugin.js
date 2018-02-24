@@ -196,16 +196,18 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           const Model = this;
           if ( we.utils._.isArray(r) ) {
             we.utils.async.eachSeries(r, function (r1, next) {
-              we.term.afterFindRecord.bind(Model)(r1, opts, next);
+              we.term.afterFindRecord.bind(Model)(r1, opts)
+                .then( ()=> { next(); })
+                .catch(next);
             }, (err)=> {
               if (err) return reject(err);
               resolve();
             });
           } else {
-            we.term.afterFindRecord.bind(Model)(r, opts, (err)=> {
-              if (err) return reject(err);
-              resolve();
-            }) ;
+            we.term.afterFindRecord
+            .bind(Model)(r, opts)
+            .then(resolve)
+            .catch(reject);
           }
         });
       });
