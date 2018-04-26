@@ -1,5 +1,5 @@
 <div class="form-group {{#if error}}has-error has-feedback{{/if}}">
-  <label for="{{fieldId}}">{{t fieldName}} {{#ifCond field.allowNull false}}*{{/ifCond}}</label>
+  <label for="{{fieldId}}">{{{label}}} {{#ifCond field.allowNull false}}*{{/ifCond}}</label>
   {{{field-help-error error}}}
 
   <select id="{{fieldId}}" name="{{name}}"
@@ -16,7 +16,7 @@
     {{/if}}
   </select>
 
-  <p class="help-block">{{t help}}</p>
+  <p class="help-block">{{{help}}}</p>
   {{{field-help-error error}}}
 </div>
 <script>$(document).ready(function() {

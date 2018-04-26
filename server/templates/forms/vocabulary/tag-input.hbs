@@ -1,18 +1,18 @@
 <div class="form-group {{#if error}}has-error has-feedback{{/if}}">
-  <label for="{{fieldId}}">{{t fieldName}} {{#ifCond field.allowNull false}}*{{/ifCond}}</label>
+  <label for="{{fieldId}}">{{{label}}} {{#ifCond field.allowNull false}}*{{/ifCond}}</label>
 
   {{#if value}}
     {{#isArray value}}
       {{#each value}}
-        <input id="{{fieldId}}" name="{{name}}" type="{{field.type}}" class="form-control" placeholder="{{t placeholder}}" {{fieldAttrs}} value="{{this}}">
+        <input id="{{fieldId}}" name="{{name}}" type="{{field.type}}" class="form-control" placeholder="{{{placeholder}}}" {{fieldAttrs}} value="{{this}}">
       {{/each}}
     {{else}}
-      <input id="{{fieldId}}" name="{{name}}" type="{{field.type}}" class="form-control" placeholder="{{t placeholder}}" {{fieldAttrs}} value="{{value}}">
+      <input id="{{fieldId}}" name="{{name}}" type="{{field.type}}" class="form-control" placeholder="{{{placeholder}}}" {{fieldAttrs}} value="{{value}}">
     {{/isArray}}
   {{else}}
-    <input id="{{fieldId}}" name="{{name}}" type="{{field.type}}" class="form-control" placeholder="{{t placeholder}}" {{fieldAttrs}} value="">
+    <input id="{{fieldId}}" name="{{name}}" type="{{field.type}}" class="form-control" placeholder="{{{placeholder}}}" {{fieldAttrs}} value="">
   {{/if}}
 
-  <p class="help-block">{{t help}}</p>
+  <p class="help-block">{{{help}}}</p>
   {{{field-help-error error}}}
 </div>
