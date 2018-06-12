@@ -1,12 +1,8 @@
 /**
- * TermModel
- *
- * @module      :: Model
- *
+ * Term Model
  */
 
 module.exports = function Model(we) {
-  // set sequelize model define and options
   return {
     definition: {
       text: {
@@ -27,10 +23,9 @@ module.exports = function Model(we) {
         type: 'hasMany',
         model: 'modelsterms',
         inverse: 'term',
-        constraints: false,
         otherKey: 'id',
         foreignKey: 'termId'
-      },
+      }
     },
     options: {
       titleField: 'text',

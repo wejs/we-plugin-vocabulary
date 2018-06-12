@@ -1,15 +1,17 @@
 /**
- * ModelsTagsModel
+ * ModelsTerms Model
  *
- * @module      :: Model
- * @description :: Association table to models and tags
- *
+ * @module      Model
+ * @description Association table to models and tags
  */
 
 module.exports = function Model(we) {
-  // set sequelize model define and options
   return {
     definition: {
+      id: {
+        type: we.db.Sequelize.INTEGER,
+        primaryKey: true
+      },
       modelName: {
         type: we.db.Sequelize.STRING,
         allowNull: false
@@ -34,7 +36,6 @@ module.exports = function Model(we) {
         defaultValue: 'Tags',
         allowNull: false
       },
-
       relatedRecord: {
         type: we.db.Sequelize.VIRTUAL
       }
@@ -44,11 +45,15 @@ module.exports = function Model(we) {
       term: {
         type: 'belongsTo',
         model: 'term',
-        inverse: 'models'
+        inverse: 'models',
+        foreignKey: 'termId'
       }
     },
 
     options: {
+      enableAlias: false,
+      tableName: 'modelsterms',
+
       classMethods: {},
       instanceMethods: {
         loadRelatedRecord(cb) {
