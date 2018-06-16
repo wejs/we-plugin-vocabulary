@@ -10,7 +10,8 @@ module.exports = function Model(we) {
     definition: {
       id: {
         type: we.db.Sequelize.INTEGER,
-        primaryKey: true
+        primaryKey: true,
+        autoIncrement: true
       },
       modelName: {
         type: we.db.Sequelize.STRING,
