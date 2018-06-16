@@ -3,3 +3,4 @@ coverage
 *.log
 files/uploads
 config
+yarn.lock
