@@ -1,0 +1,48 @@
+<div class="form-group tag-checkbox-group {{#if error}}has-error has-feedback{{/if}}">
+  <label for="{{fieldId}}">{{{label}}} {{#ifCond field.allowNull false}}*{{/ifCond}}</label>
+  {{{field-help-error error}}}
+
+  <div id="tcgi_{{fieldId}}"></div>
+
+  <p class="help-block">{{{help}}}</p>
+  {{{field-help-error error}}}
+</div>
+<script>$(document).ready(function() {
+  var area = $('#tcgi_{{fieldId}}');
+  var selectedValues = [
+    {{#each value}}'{{this}}' {{#unless @last}},{{/unless}}{{/each}}
+  ];
+
+  $.ajax({
+    method: 'get',
+    url: '/vocabulary/{{field.vocabularyName}}/term.json',
+    limit: 30
+  })
+  .done(function(result) {
+    if (result && result.term) {
+      renderInputs(result.term);
+    }
+  })
+  .fail(function(err) {
+    console.error('Error on get terms:',err);
+  });
+
+  function renderInputs(terms) {
+    terms.forEach(function(term) {
+      renderInput(term);
+    });
+  }
+
+  function renderInput(term) {
+    var checked = '';
+    if (selectedValues.indexOf(term.text) > -1) {
+      checked = ' checked="checked" ';
+    }
+
+    var tag = '<div class="tcgi-wrapper checkbox"><label>'+
+      '<input name="{{name}}" class="tcgi-input" type="checkbox" value="'+term.text+'" '+checked+' /> '+term.text+
+    '</label></div>';
+
+    area.append(tag);
+  }
+});</script>
