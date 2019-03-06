@@ -24,5 +24,6 @@
   "widget.select.vocabulary": "Selecione uma categoria",
   "widget.vocabulary.menuId": "Id do menu",
   "widget.vocabulary.class": "Classe do menu",
-  "widget.category-menu.label": "Menu de categorias ou tags"
+  "widget.category-menu.label": "Menu de categorias ou tags",
+  "widget.vocabulary.class": "Limite de termos"
 }

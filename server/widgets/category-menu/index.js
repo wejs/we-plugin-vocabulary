@@ -10,7 +10,8 @@ module.exports = function categoryMenuWidget(projectPath, Widget) {
   widget.beforeSave = function htmlWidgetBeforeSave(req, res, next) {
     req.body.configuration = {
       selectedVocabulary: req.body.selectedVocabulary,
-      class: req.body.class
+      class: req.body.class,
+      limit: Number(req.body.limit) || 10
     };
 
     return next();
@@ -22,7 +23,7 @@ module.exports = function categoryMenuWidget(projectPath, Widget) {
       where: {
         vocabularyName: widget.configuration.selectedVocabulary
       },
-      limit: 25
+      limit: Number(widget.configuration.limit) || 25
     })
     .then( (t)=> {
       widget.terms = t;

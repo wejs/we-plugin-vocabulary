@@ -18,6 +18,11 @@
     <input name="class" value="{{configuration.class}}" type="text" class="form-control" id="widget-form-{{type}}-class">
   </div>
 
+  <div class="form-group">
+    <label for="widget-form-{{type}}-limit">{{t 'widget.vocabulary.limit'}}</label>
+    <input name="limit" value="{{configuration.limit}}" type="number" class="form-control" id="widget-form-{{type}}-number">
+  </div>
+
   {{{controllFields}}}
 
   {{#if id}}
