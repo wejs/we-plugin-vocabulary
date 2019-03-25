@@ -1,7 +1,7 @@
 {
   "name": "we-plugin-vocabulary",
   "description": "We.js vocabulary, terms and tags plugin",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "main": "plugin.js",
   "scripts": {
     "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha -b test/bootstrap.js test/**/*.test.js",
