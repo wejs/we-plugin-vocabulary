@@ -1,10 +1,13 @@
+config
 test
+coverage
+files/uploads
 .jscsrc
 .jshintignore
 .jshintrc
 .travis.yml
 .gitignore
+.nyc_output
 *.log
-files/uploads
-config
-coverage
+*.sqlite
+*.sql

@@ -1,6 +1,8 @@
+files/uploads
 node_modules
 coverage
-*.log
-files/uploads
 config
-yarn.lock
+*.log
+*.sql
+*.sqlite
+.nyc_output

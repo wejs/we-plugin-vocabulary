@@ -145,6 +145,7 @@ module.exports = {
 function resolveTermContentAltTemplate(req, res) {
   const tn = res.locals.theme || ''; // theme name
   const view = req.we.view;
+  const we = req.we;
   // alternative templates
   let altTpl = '';
 
@@ -152,7 +153,8 @@ function resolveTermContentAltTemplate(req, res) {
 
   if (res.locals.data) {
     if (res.locals.data.text) {
-      const nst = req.we.utils.string(res.locals.data.text).slugify().s;
+      const nst = we.utils.stripTagsAndTruncate (res.locals.data.text, 200);
+
       altTpl = 'term/findOne-'+'term-'+nst+'-'+req.params.modelName;
       if ( tpls[altTpl] ) return altTpl;
       if ( tpls[tn+'/'+altTpl] ) return altTpl;
@@ -181,16 +183,13 @@ function findTerms(req, res, next) {
   .findAndCountAll(res.locals.query)
   .then(function afterFindAndCount(record) {
     if (!record) {
-      next();
-      return null;
+      return next();
     }
 
     res.locals.metadata.count = record.count;
     res.locals.data = record.rows;
 
     res.ok();
-
-    return null;
   })
   .catch(res.queryError);
 }

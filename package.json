@@ -4,22 +4,23 @@
   "version": "2.0.7",
   "main": "plugin.js",
   "scripts": {
-    "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha -b test/bootstrap.js test/**/*.test.js",
-    "coverage": "NODE_ENV=test LOG_LV=info node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -u exports -R spec test/bootstrap.js test/**/*.test.js"
+    "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b ",
+    "coverage": "NODE_ENV=test LOG_LV=info nyc ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js -b"
   },
   "devDependencies": {
-    "express-mysql-session": "^2.1.0",
-    "fs-extra": "^8.0.1",
+    "connect-sqlite3": "^0.9.11",
+    "fs-extra": "^8.1.0",
     "istanbul": "^0.4.5",
-    "mocha": "^6.1.4",
-    "mysql2": "^1.6.5",
+    "mocha": "^7.0.0",
+    "nyc": "^15.0.0",
+    "sqlite3": "^4.1.1",
     "supertest": "^4.0.2",
-    "we-core": "^2",
-    "we-plugin-acl": "^1.2.14",
+    "we-core": "^3.1.0",
+    "we-plugin-acl": "^1.2.16",
     "we-plugin-auth": "^2",
     "we-plugin-page": "^2.0.2",
     "we-plugin-user": "^2",
-    "we-test-tools": "0.3.22",
+    "we-test-tools": "1.0.0",
     "we-theme-site-wejs": "^0.3.31"
   },
   "repository": "wejs/we-plugin-vocabulary",

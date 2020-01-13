@@ -1,13 +1,7 @@
 language: node_js
 
 node_js:
-  - v6
-
-services:
-  - mysql
-
-addons:
-  code_climate:
+  - v10
 
 env:
   NODE_ENV: 'test'
@@ -15,11 +9,3 @@ env:
 notifications:
   email:
     - alberto@wejs.org
-
-before_script:
-  - mysql -e 'create database test;'
-
-after_success:
-- npm install coveralls
-- npm run coverage
-- cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

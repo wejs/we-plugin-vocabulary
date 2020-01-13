@@ -7,7 +7,7 @@ let we;
 before(function(callback) {
   this.slow(100);
 
-  testTools.copyLocalConfigIfNotExitst(projectPath, function() {
+  testTools.copyLocalSQLiteConfigIfNotExists(projectPath, function() {
     const We = require('we-core');
     we = new We();
 
