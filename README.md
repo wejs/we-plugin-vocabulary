@@ -24,5 +24,5 @@ Get vocabulary tag clound data with term count usage count
 
 ## Sponsored by
 
-- Linky Systems: https://linkysystems.com
+- Linky: https://linkysystems.com
 - 
